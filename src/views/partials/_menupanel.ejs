@@ -1,0 +1,23 @@
+<div class="menuVertPanel">
+    <div class="letraUserLogPanel">
+        <p><?=strtoupper(substr($_SESSION['nickname'], 0, 1));?></p>
+    </div>
+    <div class="iconosMenuPanel">
+        <div class="iconoMP">
+            <a href="index.php"><img src="/public/imagenes/iconos/homePanel.svg" alt="Botón Inicio" title="Inicio"></a>
+        </div>
+        <div class="iconoMP">
+            <a href="graficas.php"><img src="/public/imagenes/iconos/stats.png" alt="Botón Estadísticas" title="Estadísticas"></a>
+        </div>
+        <div class="iconoMP">
+            <a href="cambiarTema.php"><img src="/public/imagenes/iconos/cambiarTema.svg" alt="Botón Cambiar Tema" title="Cambiar Tema"></a>
+        </div>
+        <div class="iconoMP">
+            <a href="configuracion.php"><img src="/public/imagenes/iconos/opciones.svg" alt="Botón Configuración" title="Configuración"></a>
+        </div>
+    </div>
+    <div class="userMenuInfPanel">
+        <img src="/imagenes/iconos/iconoPerfil.jpg" alt="fotoPerfilUsuario">
+        <p><?=$_SESSION['nickname']?></p>
+    </div>
+</div>
