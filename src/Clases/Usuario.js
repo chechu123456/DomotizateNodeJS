@@ -1,7 +1,8 @@
-let Db = require("../database/db");
+let db = require("../database/db");
 //const mysql = require("mysql2");
+const conexion = db();
 
-class Usuario extends Db{
+class Usuario{
     /**
      * JS: Usuario.js
      * BASE DE DATOS: domotizate
@@ -23,15 +24,9 @@ class Usuario extends Db{
     */
     constructor ()
     {
+
     }
 
-    getConexion(){
-        return this.req;
-    }
-
-    setConexion(req){
-        this.req = req;
-    }
 
     getNickname(){
         return this.nickname;
@@ -61,7 +56,7 @@ class Usuario extends Db{
 
 
     toString(){
-        console.log("Conexion: "+ req + "\n Nickname: "+ this.nickname + "\n idCasa: "+ idCasa+ " idTema " + idTema);
+        console.log("Nickname: "+ this.nickname + "\n idCasa: "+ idCasa+ " idTema " + idTema);
     }
     /**
      *  Buscar si existe un usuario

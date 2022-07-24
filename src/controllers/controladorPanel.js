@@ -5,7 +5,6 @@ const usuario = require("../Clases/Usuario");
 const controller = {};
 
 controller.controlarPanel = async (req, res)=>{
-    usuario.setConexion(req);
     res.render("panel/index");
     console.log(req.body);
     console.log(req.session.usuarioNickname);
