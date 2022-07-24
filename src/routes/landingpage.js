@@ -3,6 +3,7 @@ const router = express.Router();
 var app = express();
 const path = require("path");
 
+
 const controlSesiones = require("../controllers/controlSesiones");
 
 app.set("views", path.join(__dirname, '../views'));
@@ -19,9 +20,6 @@ app.get("/nosotros",function(req, res){
     res.render("landingPage/nosotros");
 });
 
-app.get("/login",function(req, res){
-    res.render("landingPage/login");
-});
 
 app.get("/cookies",function(req, res){
     res.render("landingPage/cookies");
@@ -34,6 +32,14 @@ app.get("/privacidad",function(req, res){
 
 app.get("/termsCond",function(req, res){
     res.render("landingPage/termsCond");
+});
+
+app.get("/login",function(req, res){
+    if(req.session.usuarioNickname){
+        res.render("panel/index");
+    }else{
+        res.render("landingPage/login");
+    }
 });
 
 app.post("/procesoLogin", controlSesiones.controlarSesion);

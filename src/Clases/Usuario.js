@@ -22,9 +22,9 @@ class Usuario{
      * @return null 
      * 
     */
-    constructor ()
+    constructor(nickname)
     {
-
+        this.nickname = nickname;
     }
 
 
@@ -66,7 +66,7 @@ class Usuario{
      */
     buscarUsuario(){
 
-        var query =  conexion.query('SELECT * FROM usuario', function(error, result){
+        let query =  conexion.query('SELECT * FROM usuario WHERE nickname = ?',[this.nickname] ,  function(error, result){
             if(error){
                throw error;
             }else{
@@ -100,4 +100,5 @@ class Usuario{
 
 }
 
-module.exports = new Usuario();
+//module.exports = new Usuario("Sergio");
+module.exports =  Usuario;
