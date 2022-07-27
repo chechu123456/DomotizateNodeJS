@@ -1,3 +1,4 @@
+const { resolveInclude } = require("ejs");
 let db = require("../database/db");
 //const mysql = require("mysql2");
 const conexion = db();
@@ -53,8 +54,6 @@ class Usuario{
     }
 
 
-
-
     toString(){
         console.log("Nickname: "+ this.nickname + "\n idCasa: "+ idCasa+ " idTema " + idTema);
     }
@@ -64,16 +63,33 @@ class Usuario{
      *  @access public
      *  @return boolean
      */
-    buscarUsuario(){
 
+     buscarUsuario(){
+        return new Promise((resolve, reject) => {
+            conexion.query('SELECT * FROM usuario WHERE nickname = ?',[this.nickname], (error, result) => {
+                if(error){
+                    return reject(error);
+                    
+                }
+                resolve(result);
+            });
+        });
+    }
+
+/*
+
+    buscarUsuario(){
         let query =  conexion.query('SELECT * FROM usuario WHERE nickname = ?',[this.nickname] ,  function(error, result){
             if(error){
-               throw error;
+                throw error;
             }else{
-               console.log(result);
+                onResults(result);
             }
-          }
-         );
+        });
+*/      
+       
+    
+        
 /*
         req.getConnection((err, conn) =>{
             conn.query('SELECT nickname FROM usuario WHERE nickname = "'+nickname+'" LIMIT 1', (err, usuario) => {
@@ -94,11 +110,12 @@ class Usuario{
 
 
         });
-*/        
     }
+*/        
 
 
 }
+
 
 //module.exports = new Usuario("Sergio");
 module.exports =  Usuario;

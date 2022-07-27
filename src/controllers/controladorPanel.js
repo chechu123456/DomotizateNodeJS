@@ -2,16 +2,43 @@ const { promisify } = require("util");
 const express = require('express');
 const path = require("path");
 const usuario = require("../Clases/Usuario");
-const user = new usuario("Sergio");
+//const user = new usuario();
 const controller = {};
 
-controller.controlarPanel = async (req, res)=>{
+controller.controlarPanel = (req, res)=>{
+    const user = new usuario();
+
     res.render("panel/index");
     console.log(req.body);
     console.log(req.session.usuarioNickname);
-    //user.setNickname("Sergio");
+    user.setNickname(req.session.usuarioNickname);
+    console.log("----------------------------");
     console.log(user.getNickname());
-    console.log(user.buscarUsuario());
+    //console.log(user.buscarUsuario());
+
+    user.buscarUsuario()
+        .then( result => {
+            console.log(result);
+            //return conexion.query( str_sql_3 );
+        } )/*
+        .then( result => {
+            otherRows = result;
+            //return mydb.close();
+        } , err => {
+            //return mydb.close().then( () => { throw err; } )
+        })*/
+        .then( () => {
+            // do something with someRows and otherRows
+            //console.log("someRows: " + someRows[0]['itemid']);
+            //console.log(`otherRows: ${otherRows[0]['itemid']}`);
+
+        }).catch( err => {
+            // handle the error
+            console.log(err.message);
+            }   
+        );
+
+
     let data = req.body;
     /*
     req.getConnection((err, conn) =>{
