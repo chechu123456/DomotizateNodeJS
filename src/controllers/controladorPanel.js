@@ -1,12 +1,15 @@
 const { promisify } = require("util");
 const express = require('express');
 const path = require("path");
-const usuario = require("../Clases/Usuario");
-//const user = new usuario();
+//const { use } = require("../routes/landingPage");
+//const Usuario = require("../Clases/Usuario");
+
 const controller = {};
+/*
+const user = new Usuario();
+*/
 
 controller.controlarPanel = (req, res)=>{
-    const user = new usuario();
 
     res.render("panel/index");
     console.log(req.body);
@@ -14,10 +17,13 @@ controller.controlarPanel = (req, res)=>{
     user.setNickname(req.session.usuarioNickname);
     console.log("----------------------------");
     console.log(user.getNickname());
+    console.log("----------------------------");
+
     //console.log(user.buscarUsuario());
 
-    user.buscarUsuario()
+    user.buscarUsuarioBD()
         .then( result => {
+            //res.send("<p>\nUsuario encontrado</p>");
             console.log(result);
             //return conexion.query( str_sql_3 );
         } )/*
@@ -26,15 +32,16 @@ controller.controlarPanel = (req, res)=>{
             //return mydb.close();
         } , err => {
             //return mydb.close().then( () => { throw err; } )
-        })*/
+        })
         .then( () => {
             // do something with someRows and otherRows
             //console.log("someRows: " + someRows[0]['itemid']);
             //console.log(`otherRows: ${otherRows[0]['itemid']}`);
 
-        }).catch( err => {
+        })*/.catch( err => {
             // handle the error
             console.log(err.message);
+            //console.log("<p>\n No hay coincidencias con el usuario introducido. OK</p>");
             }   
         );
 
@@ -67,6 +74,16 @@ controller.controlarPanel = (req, res)=>{
     */
     
 }; 
+
+controller.registrarUsuario = (req, res)=>{
+    //console.log(req.body.nickname, req.body.password, req.body.localidad, req.body.nombCasa, req.body.idCasa);
+    user.setNickname(req.body.nickname);
+    user.crearUsuario(req.body.nickname, req.body.password, req.body.localidad, req.body.nombCasa, req.body.idCasa)
+//  res.redirect("/procesoLogin");
+    
+ 
+
+};
 
 
 

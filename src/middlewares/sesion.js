@@ -20,7 +20,7 @@ module.exports =  function(req, res, next){
 
         if(!req.session.usuarioNickname){
             console.log("No hay session");
-            res.redirect("/index");
+            res.redirect("/login");
         }else{
             console.log("Hay sesion");
             next();

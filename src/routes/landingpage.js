@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 var app = express();
 const path = require("path");
+const controlarPanel = require('../controllers/controladorPanel');
 
 
 const controlSesiones = require("../controllers/controlSesiones");
@@ -44,6 +45,7 @@ app.get("/login",function(req, res){
 
 app.post("/procesoLogin", controlSesiones.controlarSesion);
 
+app.post("/registro", controlarPanel.registrarUsuario);
 
 
 

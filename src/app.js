@@ -13,8 +13,8 @@ const mdsesion = require("./middlewares/sesion");
 
 //global.usuario = require("./Clases/Usuario");
 
-
-const controller = {};
+const Usuario = require("./Clases/Usuario.js");
+user = new Usuario();
 
 app.use(cookieSession({
     name: "session",
