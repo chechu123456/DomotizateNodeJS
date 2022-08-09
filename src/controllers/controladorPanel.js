@@ -78,7 +78,29 @@ controller.controlarPanel = (req, res)=>{
 controller.registrarUsuario = (req, res)=>{
     //console.log(req.body.nickname, req.body.password, req.body.localidad, req.body.nombCasa, req.body.idCasa);
     user.setNickname(req.body.nickname);
-    user.crearUsuario(req.body.nickname, req.body.password, req.body.localidad, req.body.nombCasa, req.body.idCasa)
+    user.buscarUsuarioBD()
+    .then(buscarUsuario => {
+        console.log(buscarUsuario);
+        if(buscarUsuario[1] === "<p>\nUsuario encontrado</p>"){
+            res.send("Usuario encontrado");
+        }else{
+            user.crearUsuario(req.body.nickname, req.body.password, req.body.localidad, req.body.nombCasa, req.body.idCasa)
+            req.session.usuarioNickname = req.body.nickname;
+            user.buscarUsuarioBD()
+            .then(buscarUsuario => {
+                console.log(buscarUsuario);
+                if(buscarUsuario === "<p>\nUsuario encontrado</p>"){
+                    res.send("Usuario creado");
+                }else{
+                    res.send("ERROR");
+                }
+            })
+        }
+    }).catch( err => {
+        console.log(err.message);
+        }   
+    );
+
 //  res.redirect("/procesoLogin");
     
  

@@ -66,12 +66,17 @@ class Usuario{
 
      buscarUsuarioBD(){
         return new Promise((resolve, reject) => {
+            let resultado = "<p>\nUsuario no encontrado</p>";
             conexion.query('SELECT nickname FROM usuario WHERE nickname = ?',[this.nickname], (error, result) => {
                 if(error){
                     error = [error, "<p>\n No hay coincidencias con el usuario introducido. OK</p>"];
                     return reject(error);                    
                 }
-                let resultado = [result, "<p>\nUsuario encontrado</p>"];                
+
+                if(! (JSON.stringify(result) === "[]")){
+                    resultado = [result, "<p>\nUsuario encontrado</p>"];
+                }
+
                 resolve(resultado);
             });
              
@@ -144,7 +149,6 @@ class Usuario{
      *  @return null|int
      */
     crearUsuario(nickname, password, localidad, nombCasa, idCasa){
-        return new Promise((resolve, reject) => {
         //Si el idCasa no esta vacío 
         if(!(idCasa)){
             //Se comprueba si existe ese idCasa en la base de datos
@@ -181,7 +185,6 @@ class Usuario{
                                                         this.crearUsuarioBD(password, localidad)
                                                             .then(crearUsuarioBD => {
                                                                 console.log(crearUsuarioBD);
-                                                                return "ok";
                                                             }).catch( err => {
                                                                 console.log(err.message);
                                                                 }   
@@ -215,7 +218,6 @@ class Usuario{
             }                    
             
         }
-        });  
 
         /*else{
             
