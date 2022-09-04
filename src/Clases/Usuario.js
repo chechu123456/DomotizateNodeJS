@@ -57,6 +57,7 @@ class Usuario{
     toString(){
         console.log("Nickname: "+ this.nickname + "\n idCasa: "+ idCasa+ " idTema " + idTema);
     }
+
     /**
      *  Buscar si existe un usuario
      * 
@@ -150,74 +151,137 @@ class Usuario{
      */
     crearUsuario(nickname, password, localidad, nombCasa, idCasa){
         //Si el idCasa no esta vacío 
-        if(!(idCasa)){
-            //Se comprueba si existe ese idCasa en la base de datos
-            if(this.buscarIdCasa(idCasa) === true){
-                this.setIdCasa(idCasa);
-                this.crearTema();
-                this.idTema = idTema;
-                //Si existe en la base de datos, se crea el usuario asignandole esa casa con el idCasa introducido
-             
-            
-            }else{               
-                this.crearCasa()
-                    .then( resultCrearCasa => {
-                        console.log(resultCrearCasa);
-                        this.buscarIdUltCasa() 
-                            .then( resultIdUltCasa => {
-                                console.log(resultIdUltCasa[0][0].idCasa);
-                                this.idCasa = resultIdUltCasa[0][0].idCasa;
+        return new Promise((resolve, reject) => {
 
+            if(idCasa){          
+                //Se comprueba si existe ese idCasa en la base de datos
+                this.buscarIdCasa(idCasa)
+                .then(resultBuscarIdCasa => {
+                    console.log(resultBuscarIdCasa);
+                    console.log("***************");
+
+
+                    if(resultBuscarIdCasa === true){
+                        //Si existe en la base de datos, se crea el usuario asignandole esa casa con el idCasa introducido
+                        console.log("***************");
+
+                        this.setIdCasa(idCasa);
+                        this.crearTema()
+                        .then( crearTema => {
+                            console.log(crearTema); 
+        
+                            this.crearUsuarioBD(password, localidad)
+                                .then(crearUsuarioBD => {
+                                    console.log(crearUsuarioBD);
+        
+                                }).catch( err => {
+                                    console.log(err.message);
+                                    }   
+                                );
+        
+                        }).catch( err => {
+                            console.log(err.message);
+                            }   
+                        );
+        
+                    
+                    }else{
+                        //Si ha especificado un idCasa que no existe en la BD               
+                        this.crearCasa()
+                            .then( resultCrearCasa => {
+                                console.log(resultCrearCasa);
+                            
+                                console.log(this.idCasa);
+        
                                 this.cambiarNombreCasa(nombCasa,this.idCasa) 
                                     .then( resultCambiarNombCasa => {
                                         console.log(resultCambiarNombCasa);   
+        
+                                    this.crearTema()
+                                        .then( crearTema => {
+                                            console.log(crearTema); 
+        
+                                            this.crearUsuarioBD(password, localidad)
+                                                .then(crearUsuarioBD => {
+                                                    console.log(crearUsuarioBD);
+        
+                                                    this.crearSensorTienenRegistro();
+        
+                                                }).catch( err => {
+                                                    console.log(err.message);
+                                                    }   
+                                                );
+        
+                                        }).catch( err => {
+                                            console.log(err.message);
+                                            }   
+                                        );
+        
+                                }).catch( err => {
+                                    console.log(err.message);
+                                    }   
+                                );
+        
+                            }).catch( err => {
+                                console.log(err.message);
+                                }   
+                            );  
+                                        
+                    }          
+                }).catch( err => {
+                    console.log(err.message);
+                    }   
+                );
+                
+                        
+                
+            }else{
+                this.crearCasa()
+                        .then( resultCrearCasa => {
+                            console.log("<----------------------->");
+                            console.log(resultCrearCasa);
+                            console.log(this.idCasa);
+                            console.log("<----------------------->");
+                            this.cambiarNombreCasa(nombCasa,this.idCasa) 
+                                .then( resultCambiarNombCasa => {
+                                    console.log(resultCambiarNombCasa);   
 
-                                        this.crearTema()
-                                            .then( crearTema => {
-                                                console.log("---------");
-                                                console.log(crearTema); 
+                                this.crearTema()
+                                    .then( crearTema => {
+                                        console.log(crearTema); 
 
-                                                this.obtenerUltIdTema()
-                                                    .then(ultIdTema => {
-                                                        console.log(ultIdTema[0][0].idTema);  
-                                                        this.idTema  = ultIdTema[0][0].idTema;
+                                        this.crearUsuarioBD(password, localidad)
+                                            .then(crearUsuarioBD => {
+                                                console.log(crearUsuarioBD);
 
-                                                        this.crearUsuarioBD(password, localidad)
-                                                            .then(crearUsuarioBD => {
-                                                                console.log(crearUsuarioBD);
-                                                            }).catch( err => {
-                                                                console.log(err.message);
-                                                                }   
-                                                            );
-
-                                                    }).catch( err => {
-                                                        console.log(err.message);
-                                                        }   
-                                                    );
+                                                this.crearSensorTienenRegistro();
 
                                             }).catch( err => {
                                                 console.log(err.message);
                                                 }   
-                                            );          
+                                            );
 
                                     }).catch( err => {
                                         console.log(err.message);
                                         }   
                                     );
 
+
                             }).catch( err => {
                                 console.log(err.message);
                                 }   
                             );
 
-                    }).catch( err => {
-                        console.log(err.message);
-                        }   
-                    );  
-                                  
-            }                    
-            
-        }
+                        }).catch( err => {
+                            console.log(err.message);
+                            }   
+                        );  
+                                    
+                    
+            }
+            resolve("ok");
+        });
+
 
         /*else{
             
@@ -256,6 +320,7 @@ class Usuario{
         */
     }
 
+
     /**
      *  Para editar los valores de un usuario existente
      * 
@@ -280,7 +345,7 @@ class Usuario{
 
 
     editarUsuario(nickname, password, localidad, nombCasa){
-        $valores = array();
+        valores = [];
         (nickname ?  valores['nickname']="nickname='"+nickname+"'" : null);
         (password ?  valores['password']="password='"+password+"'" : null);
         (localidad ?  valores['localidad']="localidad='"+localidad+"'" : null);
@@ -363,6 +428,7 @@ class Usuario{
                     return reject(error);                    
                 }
                 let resultado = [result, "<p>Casa creada</p>"];
+                this.idCasa = result.insertId;
                 resolve(resultado);
             });
              
@@ -423,10 +489,10 @@ class Usuario{
         return new Promise((resolve, reject) => {
             conexion.query('SELECT idCasa FROM usuario WHERE nickname = ? LIMIT 1', [this.nickname], (error, result) => {
                 if(error){
-                    error = [error, "<p>ERROR: No se ha encontrado el nombre de la casa</p>"];
+                    error = [error, "<p>ERROR: No se ha encontrado el id de la casa de este usuario</p>"];
                     return reject(error);                    
                 }
-                let resultado = [result, "<p>Se ha encontrado el nombre de la casa</p>"];
+                let resultado = [result, "<p>Se ha encontrado el id de la casa de este usuario</p>"];
                 resolve(resultado);
             });
              
@@ -443,12 +509,16 @@ class Usuario{
 
     buscarIdCasaBD(){
         return new Promise((resolve, reject) => {
+            let resultado = "<p>No Se ha encontrado el id de la casa</p>";
             conexion.query('SELECT * FROM casa WHERE idCasa = ? LIMIT 1', [this.idCasa], (error, result) => {
                 if(error){
-                    error = [error, "<p>ERROR: No se ha encontrado el nombre de la casa</p>"];
+                    error = [error, "<p>ERROR: No se ha encontrado el id de la casa</p>"];
                     return reject(error);                    
                 }
-                let resultado  = [resultado, "<p>Se ha encontrado el nombre de la casa</p>"];
+
+                if(! (JSON.stringify(result) === "[]")){
+                    resultado = [result, "<p>Se ha encontrado el id de la casa</p>"];
+                }
                 resolve(resultado);
             });
              
@@ -457,25 +527,35 @@ class Usuario{
     }
     
     buscarIdCasa(idCasa){
-        let idCasaExiste = false;
-        if( !(idCasa) || !isNaN(idCasa)){
-            idCasaExiste = false;
-        }else{
-            idCasaExiste = buscarUsuarioBD(idCasa)
-                .then( result => {
-                    //res.send("<p>Se ha encontrado la casa</p>");
-                    console.log(result);
-                    //return conexion.query( str_sql_3 );
-                    return true;
-                } )
-                .catch( err => {
-                    console.log(err.message);
-                    //res.send("<p>ERROR: No se ha encontrado el ID de la Casa</p>");
-                    return false;
-                }
-            ); 
-        }  
-        return idCasaExiste;
+            // isNaN --> si es un numero devuelve false
+            //Si es true --> es texto
+            if( (idCasa == false) || ( (isNaN(idCasa))) ){
+                console.log("NO HAS INSERTADO ID CASA");
+                resolve(false);
+            }else{
+                console.log(" HAS INSERTADO ID CASA");
+                return this.buscarIdCasaBD()
+                        .then( result => {
+                            console.log(result);
+                            
+                            if(result != "<p>No Se ha encontrado el id de la casa</p>"){
+                                console.log("<p>Se ha encontrado la casa</p>");
+                                return true;
+                            }else{
+                                console.log("<p>ERROR: No se ha encontrado el ID de la Casa</p>");
+                                return false;
+                            }
+
+                        } )
+                        .catch( err => {
+                            console.log(err.message);
+                            console.log("<p>ERROR: No se ha encontrado el ID de la Casa</p>");
+                            return false;
+                        }
+                ); 
+            }  
+
+         
     }
 
         /**
@@ -527,7 +607,7 @@ class Usuario{
      *  @return boolean
      */
     crearRegistro(valor){
-        ($valor == "NULL" ? $valor = 'NULL': $valor = $valor);        
+        (valor == "NULL" ? valor = 'NULL': valor = valor);        
         return new Promise((resolve, reject) => {
             conexion.query("INSERT INTO registro (valor, nickname) VALUES(?, ?)", [valor, this.nickname], (error, result) => {
                 if(error){
@@ -624,7 +704,7 @@ class Usuario{
      */  
     crearSensor(nombSensor){
         return new Promise((resolve, reject) => {
-            conexion.query("INSERT INTO sensor VALUES(0, ?, ? )", [nombSensor, this.idCasa],  (error, result) => {
+            conexion.query("INSERT INTO sensor VALUES(0, ?, NULL, ? )", [nombSensor, this.idCasa],  (error, result) => {
                 if(error){
                     error = [error, "<p>ERROR: No se ha creado el sensor</p>"];
                     return reject(error);                    
@@ -740,71 +820,45 @@ class Usuario{
 
         let nombreSensores = ["arduino","ascensor", "ventilador", "puertaGaraje", "puertaPrincipal", "alarma", "luzPasilloPB", "luzPasilloPA",
         "luzCocina",  "luzSalon", "luzBanho", "luzHab1", "luzHab2", "luzInteriorGaraje", "luzVerdeGaraje", "luzRojaGaraje"];         
+        console.log(nombreSensores);
+        console.log(nombreSensores.length);
 
-        for(i=0; $i < nombreSensores.length; i++){
+        for(let i = 0; i < nombreSensores.length; i++){
+            let valorSensorDefecto = 0;
 
             if(nombreSensores[i] == "puertaGaraje" || nombreSensores[i] == "puertaPrincipal" ||  nombreSensores[i] == "alarma"){
                 valorSensorDefecto = "E";
-            }else{
-                valorSensorDefecto = 0;
             }
 
-            crearRegistro(valorSensorDefecto)
-                .then( result => {
-                    //res.send("<p>\nUsuario encontrado</p>");
-                    console.log(result);
-                    //return conexion.query( str_sql_3 );
+            console.log("---------------------------");
+            console.log(nombreSensores[i]);
+            console.log(valorSensorDefecto);
+            console.log("---------------------------");
 
-                    obtenerUltRegistro()
-                        .then( result => {
-                            //res.send("<p>\nUsuario encontrado</p>");
-                            console.log(result);
-                            //return conexion.query( str_sql_3 );
+            this.crearRegistro(valorSensorDefecto)
+                .then( resultCrearRegistro => {
+                    console.log(resultCrearRegistro);
+                    console.log(resultCrearRegistro[0].insertId);
+                   
+                    this.crearSensor(nombreSensores[i])
+                        .then( resultNombSensores => {
+                            console.log(resultNombSensores);
 
-                            crearSensor(nombreSensores[i])
-                                .then( result => {
-                                    //res.send("<p>\nUsuario encontrado</p>");
-                                    console.log(result);
-                                    //return conexion.query( str_sql_3 );
-
-                                    buscarIdSensorNomb(nombreSensores[i])
-                                        .then( result => {
-                                            //res.send("<p>\nUsuario encontrado</p>");
-                                            console.log(result);
-                                            //return conexion.query( str_sql_3 );
-
-                                                crearTienen(nombreSensores[i])
-                                                    .then( result => {
-                                                        //res.send("<p>\nUsuario encontrado</p>");
-                                                        console.log(result);
-                                                        //return conexion.query( str_sql_3 );
-                                                    } ).catch( err => {
-                                                        console.log(err.message);
-                                                        //console.log("<p>\n No hay coincidencias con el usuario introducido. OK</p>");
-                                                        }   
-                                                    );
-
-                                        } ).catch( err => {
-                                            console.log(err.message);
-                                            //console.log("<p>\n No hay coincidencias con el usuario introducido. OK</p>");
-                                            }   
-                                        );
-
+                            this.crearTienen(resultNombSensores[0].insertId,  resultCrearRegistro[0].insertId)
+                                .then( resultTienen => {
+                                    console.log(resultTienen);
                                 } ).catch( err => {
                                     console.log(err.message);
-                                    //console.log("<p>\n No hay coincidencias con el usuario introducido. OK</p>");
                                     }   
                                 );
 
                         } ).catch( err => {
                             console.log(err.message);
-                            //console.log("<p>\n No hay coincidencias con el usuario introducido. OK</p>");
                             }   
                         );
 
                 } ).catch( err => {
                     console.log(err.message);
-                    //console.log("<p>\n No hay coincidencias con el usuario introducido. OK</p>");
                     }   
                 );
             
@@ -824,14 +878,47 @@ class Usuario{
         //Se inicializa, para que cuando se cree el usuario, tenga un valor inicial y no de errores al entrar 
         //a la página de inicio del panel
 
-        this.crearRegistro(valor);
-        idRegistro = this.obtenerUltRegistro();
         
-        //echo "\n ------------------------ \n";
-        //echo "\n El registro obtenido es: " .$idRegistro ."\n";
-        idSensor = this.buscarIdSensorNomb(nombSensor);
-        //echo "\n El idSensor recuperado es: " .$idSensor ."\n"; 
+   
         this.crearTienen(idSensor, idRegistro);
+
+        crearRegistro(valorSensorDefecto)
+        .then( resultCrearRegistro => {
+            console.log(resultCrearRegistro);
+
+            obtenerUltRegistro()
+                .then( resultUltRegistro => {
+                    console.log(resultUltRegistro);
+                    let ultRegistro =  resultUltRegistro[0].idRegistro;
+                    console.log(ultRegistro);
+               
+                    buscarIdSensorNomb(nombSensor)
+                        .then( resultIdSensorNomb => {
+                            console.log(resultIdSensorNomb);
+
+                            crearTienen(resultIdSensorNomb[0].idSensor,  resultUltRegistro[0].idRegistro)
+                                    .then( resultTienen => {
+                                        console.log(resultTienen);
+                                    } ).catch( err => {
+                                        console.log(err.message);
+                                        }   
+                                    );
+
+                        } ).catch( err => {
+                            console.log(err.message);
+                            }   
+                        );
+
+                } ).catch( err => {
+                    console.log(err.message);
+                    }   
+                );
+
+        } ).catch( err => {
+            console.log(err.message);
+            }   
+        );
+    
         
     }
 
@@ -954,6 +1041,7 @@ class Usuario{
                     return reject(error);                    
                 }
                 let resultado = [result, "\n<p>Tema Creado</p>"];
+                this.idTema = result.insertId;
                 resolve(resultado);
             });
              
@@ -1009,13 +1097,13 @@ class Usuario{
     *  @return boolean
     */  
     modificarTema( colorFondoPagPanel, colorFondoPanel, colorTitulosPanel, colorNombSensores, tamanoLetraTit, tamanoLetraNombSensores ){
-        $valores = Array();
+        valores = [];
         (colorFondoPagPanel ?  valores['colorFondoPagPanel']="colorFondoPagPanel=" + colorFondoPagPanel : valores['colorFondoPagPanel']="colorFondoPagPanel=NULL");
-        (colorFondoPanel ?  valores['colorFondoPanel']="colorFondoPanel='" + colorFondoPanel : $valores['colorFondoPanel']="colorFondoPanel=NULL");
-        (colorTitulosPanel ?  valores['colorTitulosPanel']="colorTitulosPanel=" + colorTitulosPanel : $valores['colorTitulosPanel']="colorTitulosPanel=NULL");
-        (colorNombSensores ?  valores['colorNombSensores']="colorNombSensores='" + colorNombSensores : $valores['colorNombSensores']="colorNombSensores=NULL");
-        (tamanoLetraTit ?  valores['tamanoLetraTit']="tamanoLetraTit='" + tamanoLetraTit : $valores['tamanoLetraTit']="tamanoLetraTit=NULL");
-        (tamanoLetraNombSensores ?  valores['tamanoLetraNombSensores']="tamanoLetraNombSensores=" + $tamanoLetraNombSensores : $valores['tamanoLetraNombSensores']="tamanoLetraNombSensores=NULL");
+        (colorFondoPanel ?  valores['colorFondoPanel']="colorFondoPanel='" + colorFondoPanel : valores['colorFondoPanel']="colorFondoPanel=NULL");
+        (colorTitulosPanel ?  valores['colorTitulosPanel']="colorTitulosPanel=" + colorTitulosPanel : valores['colorTitulosPanel']="colorTitulosPanel=NULL");
+        (colorNombSensores ?  valores['colorNombSensores']="colorNombSensores='" + colorNombSensores : valores['colorNombSensores']="colorNombSensores=NULL");
+        (tamanoLetraTit ?  valores['tamanoLetraTit']="tamanoLetraTit='" + tamanoLetraTit : valores['tamanoLetraTit']="tamanoLetraTit=NULL");
+        (tamanoLetraNombSensores ?  valores['tamanoLetraNombSensores']="tamanoLetraNombSensores=" + tamanoLetraNombSensores : valores['tamanoLetraNombSensores']="tamanoLetraNombSensores=NULL");
         
         datos = valores.join(",");
 

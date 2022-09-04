@@ -211,8 +211,9 @@
                         }
                     })
                     .done(function(data) {
-                        //console.log(data);
-                        
+                        console.log(data);
+                        console.log(data[1]);
+
                         if(data){
                             //alert(data);
                             var usuarioEncontrado = "Usuario encontrado";
@@ -220,13 +221,17 @@
 
                             var usuarioOK = "Usuario creado correctamente";
 
-                            if(data.includes(usuarioEncontrado)){
+                            if(data[0].includes(usuarioEncontrado)){
                                 swal("ERROR!", "El usuario ya existe", "warning");
-                            }else if(data.includes(idCasaCambiado)){
+                                console.log(data[0]);
+                            }else if(data[0].includes(idCasaCambiado)){
+                                console.log(data[0]);
                                 swal("AVISO!", "Se le ha asignado un ID diferente", "info");
                                 //Al hacer click en aceptar en el aviso, redireccionar al panel
                                 $(document).on("click", ".swal-button", function(e){
-                                    if(data.includes(usuarioOK)){
+                                    if(data[1].includes(usuarioOK)){
+                                        console.log(data[1]);
+
                                         //Todo OK, redireccionar al panel
                                         window.location.href = "/admin/index";
                                         //console.log(data);                                      

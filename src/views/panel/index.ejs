@@ -1,87 +1,9 @@
 
-    <script>
-        let frutas = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
-
-        
-    </script>
-
-    $datosUsuario = $listado->recuperarDatosUsuario($_SESSION['nickname']);
-    $datosSensoresUsuario = $listado->listarSensoresValoresPorCasa($datosUsuario['idCasa']);
-    $nombresSensoresCasa = $listado->listarNombresSensoresWeb($_SESSION['idCasa']);
-    $idTemaUsuario = $listado->obtenerIdTemaUsuario($_SESSION['nickname']);
-    $datosTema = $listado->obtenerDatosTema($idTemaUsuario);
-
-    //var_dump($datosTema);
-    //$listadoSensores = var_dump($datosSensoresUsuario);
-    //var_dump($nombresSensoresCasa);
-    $localidad = $datosUsuario['localidad'];
-    if(!empty($localidad)){
-        switch($localidad){
-            case "ponferrada":
-                $codigoLocalidad = "24115";
-                break;
-            case "barco":
-                $codigoLocalidad = "32009";
-                break;
-            case "coruna":
-                $codigoLocalidad = "15030";
-                break;
-            case "madrid":
-                $codigoLocalidad = "28079";
-                break;
-            case "barcelona":
-                $codigoLocalidad = "08019";
-                break;
-        }
-    }
-
-    $url = "http://www.aemet.es/xml/municipios/localidad_$codigoLocalidad.xml";
-    $xml = simplexml_load_string(file_get_contents($url));
-    if($xml){
-
-        //Para visualizar el nombre lo podemos hacer de dos formas
-        $nombreSitio = $xml -> nombre. "<br>"; //en este caso no se tiene en cuenta root
-        $items = $xml -> prediccion -> dia;
-
-        //Coger temperatura que más se aproxime a la hora del día
-        $horaActual = date('G');
-        if(!empty($horaActual)){
-            if( ($horaActual >= 3) && ($horaActual < 9) ){
-                $temp = $items[0] -> temperatura -> dato[0];
-            }else if( ($horaActual >= 9) && ($horaActual < 15) ){
-                $temp = $items[0] -> temperatura -> dato[1];
-            }else if( ($horaActual >= 15) && ($horaActual < 21) ){
-                $temp = $items[0] -> temperatura -> dato[2];
-            }else if( ($horaActual >= 21) && ($horaActual < 3) ){
-                $temp = $items[0] -> temperatura -> dato[3];
-            }else{
-                $temp = "<div class='errorDatosTiempo'>SIN DATOS</div>";
-            }
-        }else{
-            $temp = "<div class='errorDatosTiempo'>SIN DATOS</div>";
-        }
-
-        //echo $temp;
-        //echo $items[0] -> temperatura -> dato[2];
-        $estadoDia = $items[0] -> estado_cielo[2] -> attributes() -> descripcion;
-
-        if(empty($estadoDia)){
-            $img = "/public/imagenes/iconos/advertencia.png";
-        }else{
-            if(  strpos($estadoDia, "soleado") || strpos($estadoDia, "poco nuboso") ||  strpos($estadoDia, "Despejado") ){
-                $img = "/public/imagenes/iconos/soleado.svg";
-            }else if(strpos($estadoDia, "nuboso")){
-                $img = "/public/imagenes/iconos/nublado.svg";
-            }else if(strpos($estadoDia, "lluvia")){
-                $img = "/public/imagenes/iconos/lluvia.svg";
-            }else{
-                $img = "/public/imagenes/iconos/soleado.svg";
-            }
-        }
-    }
-
-
-    $nombCasa = $listado->buscarNombreCasa($_SESSION['idCasa']);
+<script>
+    let meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];        
+    let fechaActual = new Date();
+    alert(<%-temp%>);
+</script>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -105,18 +27,18 @@
             <div class="contFechaTiempo">
                 <div class="contFechaHora paneles">
                     <p class="subTitPanelFila1">Fecha & Hora</p>
-                    <p class="fecha"><?=date('d ').$meses[date('n')-1].date(' Y');?></p>
-                    <p class="hora" id="panelMostrarHora"><?=date('G:i');?></p>
+                    <p class="fecha"><script>document.write(fechaActual.getDate() + " de " + meses[fechaActual.getMonth()] + " de " + fechaActual.getFullYear()); </script></p>
+                    <p class="hora" id="panelMostrarHora"><script>document.write(fechaActual.getHours() + ":" + fechaActual.getMinutes()); </script></p>
                 </div>
                 <div class="contTiempo paneles">
                     <p class="subTitPanelFila1">Tiempo</p>
                     <div class="contIntTiempo">
                         <div class="imgTiempo">
-                            <img src="<?=$img?>" alt="Imagen Tiempo" class="imgTiempo">
+                            <img src="<%=img%>" alt="Imagen Tiempo" class="imgTiempo">
                         </div>
                         <div class="textoTiempo">
-                            <p class="direccionTiempo"><?=$nombreSitio?></p>
-                            <p class="gradosTiempo"><?=(strpos($temp, "div")?$temp:$temp."°C")?></p>
+                            <p class="direccionTiempo"><%-nombreCiudad %></p>
+                            <p class="gradosTiempo"><%-temp%></p>
                         </div>
                     </div>
                 </div>
@@ -286,10 +208,10 @@
        
         //touchstart
         $(document).on("click", ".icoCerrarSesion", function(){
-            window.location.href = "<?php echo localizacion() . "funciones/cerrarSesion.php"?>";
+            window.location.href = "/admin/cerrarSesion";
 
         });
-
+/*
 <?php
         if(empty($estadoDia)){
 ?>
@@ -298,7 +220,7 @@
 <?php
         }
 ?>
-
+*/
         //Cambiar estilo al hacer click en los botones del ascensor
         $(document).on("click", ".pa", function(){
             if($(this).attr("class").split(' ')[1] != "plantaSeleccionada"){
@@ -333,6 +255,7 @@
         });
 
          //Cambiar texto CONECTADO / DESCONECTADO
+         /*
         function recuperarValores(){
               
             //AJAX - Guardar cambios en la bd
@@ -382,6 +305,7 @@
                 console.error('Error: No se han podido recuperar los datos de la temperatura, la humedad y del estado del arduino');
             });
         }
+        */
 
         //Ejecutar funcion repetidamente
         setInterval(function(){ 
@@ -407,12 +331,14 @@
 
 
             /******* CAMBIAR TEMA *********/
+            /*
             var colorFondoPagPanel = "<?=(empty($datosTema['colorFondoPagPanel'])) ? "NULO": $datosTema['colorFondoPagPanel']?>";            
             var colorFondoPanel = "<?=(empty($datosTema['colorFondoPanel'])) ? "NULO": $datosTema['colorFondoPanel']?>";
             var colorTitulosPanel = "<?=(empty($datosTema['colorTitulosPanel'])) ? "NULO": $datosTema['colorTitulosPanel']?>";
             var colorNombSensores = "<?=(empty($datosTema['colorNombSensores'])) ? "NULO": $datosTema['colorNombSensores']?>";
             var tamanoLetraTit = "<?=(empty($datosTema['tamanoLetraTit'])) ? "NULO": $datosTema['tamanoLetraTit']?>";
             var tamanoLetraNombSensores = "<?=(empty($datosTema['tamanoLetraNombSensores'])) ? "NULO": $datosTema['tamanoLetraNombSensores']?>";
+            */
             console.log(colorFondoPagPanel);
             
             if(colorFondoPagPanel == "NULO"){

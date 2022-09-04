@@ -12,6 +12,8 @@ app.set("views", path.join(__dirname, '../views/'));
 
 app.get("/index",controlador.controlarPanel);
 
+app.get("/cerrarSesion", controlador.cerrarSession);
+
 //app.post("/index", controlador.controlarPanel);
 
 
