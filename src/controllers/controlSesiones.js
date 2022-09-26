@@ -9,7 +9,6 @@ const controller = {};
 
 controller.controlarSesion = async (req, res)=>{
     console.log(req.body);
-    console.log(req.session.usuarioNickname);
 
     let data = req.body;
     
@@ -31,7 +30,11 @@ controller.controlarSesion = async (req, res)=>{
             if(JSON.stringify(usuario)!='[]'){
                 console.log("Tiene datos");
                 req.session.usuarioNickname = usuario[0].nickname;
+                req.session.idTema = usuario[0].idTema;
+                req.session.idCasa = usuario[0].idCasa;
+                req.session.localidad = usuario[0].localidad;
                 console.log("Sesion: "+ req.session.usuarioNickname);
+
                 res.send("Usuario y contraseña OK");
             }else{
                 console.log("No tiene datos");

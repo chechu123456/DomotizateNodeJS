@@ -37,7 +37,7 @@ app.get("/termsCond",function(req, res){
 
 app.get("/login",function(req, res){
     if(req.session.usuarioNickname){
-        res.render("panel/index");
+        res.redirect("/admin/index");
     }else{
         res.render("landingPage/login");
     }

@@ -55,7 +55,7 @@ class Usuario{
 
 
     toString(){
-        console.log("Nickname: "+ this.nickname + "\n idCasa: "+ idCasa+ " idTema " + idTema);
+        console.log("Nickname: "+ this.nickname + "\n idCasa: "+ this.idCasa+ " \n idTema " + this.idTema);
     }
 
     /**
@@ -96,10 +96,11 @@ class Usuario{
             conexion.query('SELECT * FROM usuario WHERE nickname = ?',[this.nickname], (error, result) => {
                 if(error){
                     error = [error, "\n<p>ERROR:No se obtuvieron los datos del usario</p>"];
-                    return reject(error);                    
+                    return reject(error);  
+                    console.log(this.nickname);                  
                 }
-                let resultado = [result, "Se han obtenido los datos del usuario"];
-                resolve(result);
+                let resultado = [result, "Se han obtenido los datos del usuario", this.nickname];
+                resolve(resultado);
             });
              
         });
@@ -836,32 +837,32 @@ class Usuario{
             console.log("---------------------------");
 
             this.crearRegistro(valorSensorDefecto)
-                .then( resultCrearRegistro => {
-                    console.log(resultCrearRegistro);
-                    console.log(resultCrearRegistro[0].insertId);
-                   
-                    this.crearSensor(nombreSensores[i])
-                        .then( resultNombSensores => {
-                            console.log(resultNombSensores);
+            .then( resultCrearRegistro => {
+                console.log(resultCrearRegistro);
+                console.log(resultCrearRegistro[0].insertId);
+                
+                this.crearSensor(nombreSensores[i])
+                    .then( resultNombSensores => {
+                        console.log(resultNombSensores);
 
-                            this.crearTienen(resultNombSensores[0].insertId,  resultCrearRegistro[0].insertId)
-                                .then( resultTienen => {
-                                    console.log(resultTienen);
-                                } ).catch( err => {
-                                    console.log(err.message);
-                                    }   
-                                );
+                        this.crearTienen(resultNombSensores[0].insertId,  resultCrearRegistro[0].insertId)
+                            .then( resultTienen => {
+                                console.log(resultTienen);
+                            } ).catch( err => {
+                                console.log(err.message);
+                                }   
+                            );
 
-                        } ).catch( err => {
-                            console.log(err.message);
-                            }   
-                        );
+                    } ).catch( err => {
+                        console.log(err.message);
+                        }   
+                    );
 
-                } ).catch( err => {
-                    console.log(err.message);
-                    }   
-                );
-            
+            } ).catch( err => {
+                console.log(err.message);
+                }   
+            );
+        
         }
         
     }
@@ -877,42 +878,31 @@ class Usuario{
         //de todos los eventos con los sensores 
         //Se inicializa, para que cuando se cree el usuario, tenga un valor inicial y no de errores al entrar 
         //a la página de inicio del panel
-
         
-   
-        this.crearTienen(idSensor, idRegistro);
-
-        crearRegistro(valorSensorDefecto)
+        
+        this.crearRegistro(valor)
         .then( resultCrearRegistro => {
             console.log(resultCrearRegistro);
+           
+            let ultRegistro = resultCrearRegistro[0].insertId;
+            console.log(ultRegistro);
+            console.log(nombSensor);
+            this.buscarIdSensorNomb(nombSensor)
+                .then( resultIdSensorNomb => {
+                    console.log(resultIdSensorNomb);
 
-            obtenerUltRegistro()
-                .then( resultUltRegistro => {
-                    console.log(resultUltRegistro);
-                    let ultRegistro =  resultUltRegistro[0].idRegistro;
-                    console.log(ultRegistro);
-               
-                    buscarIdSensorNomb(nombSensor)
-                        .then( resultIdSensorNomb => {
-                            console.log(resultIdSensorNomb);
-
-                            crearTienen(resultIdSensorNomb[0].idSensor,  resultUltRegistro[0].idRegistro)
-                                    .then( resultTienen => {
-                                        console.log(resultTienen);
-                                    } ).catch( err => {
-                                        console.log(err.message);
-                                        }   
-                                    );
-
-                        } ).catch( err => {
-                            console.log(err.message);
-                            }   
-                        );
+                    this.crearTienen(resultIdSensorNomb[0].idSensor,  ultRegistro)
+                            .then( resultTienen => {
+                                console.log(resultTienen);
+                            } ).catch( err => {
+                                console.log(err.message);
+                                }   
+                            );
 
                 } ).catch( err => {
                     console.log(err.message);
                     }   
-                );
+                    );
 
         } ).catch( err => {
             console.log(err.message);
@@ -930,46 +920,55 @@ class Usuario{
     *  @access public
     *  @return array
     */  
-    /*
-    function listarSensoresValoresPorCasa(int $idCasa){            
-    $estadoSensores=array();
-
-    if(!empty($idCasa)){
-        $query = "SELECT idSensor
-                FROM sensor
-                WHERE idCasa = $idCasa";
-
-                
-        if($res = parent::conecta()->query($query)) {   
-            while( $fila = mysqli_fetch_array($res) ){
-                $obtenerIdSensor = $fila['idSensor'];
-                $query2 = "SELECT * FROM sensor
-                            INNER JOIN tienen ON tienen.idSensor = sensor.idSensor 
-                            INNER JOIN registro ON registro.idRegistro = tienen.idRegistro 
-                            WHERE tienen.`idSensor` = '".$obtenerIdSensor."'
-                            ORDER BY tienen.idRegistro DESC 
-                            LIMIT 1";
-                if($res2 = parent::conecta()->query($query2)) {   
-                    while( $fila2 = mysqli_fetch_array($res2) ){
-                        $estadoSensores[$fila2['nombSensor']] = $fila2['valor'];
-                    }         
+    valoresSensores(idSensor){        
+        console.log(idSensor);
+        return new Promise((resolve, reject) => {
+            conexion.query("SELECT * FROM sensor INNER JOIN tienen ON tienen.idSensor = sensor.idSensor INNER JOIN registro ON registro.idRegistro = tienen.idRegistro WHERE tienen.idSensor = ? ORDER BY registro.fechaRegistro DESC LIMIT 1", [idSensor],(error, resultValorSensor) => {
+                if(error){
+                    error = [error, "\n<p>ERROR: No se han encontrado valores para el sensor</p>"];
+                    return reject(error);                    
                 }
-                                
-            }    
-        }else{
-            echo "No se han obtenido los ids de los sensores de la casa";
-        }
+                //console.log(resultValorSensor);
+                let resultado = [resultValorSensor, "\n<p>Se han encontrado valores del sensor</p>"];
 
-    }else{
-        echo "ERROR: No se pueden listar el estado de los sensores porque no se tiene el IdCasa";
+                resolve(resultValorSensor);
+            });  
+             
+        });  
     }
 
-    return $estadoSensores;
-    
-        mysqli_close(parent::conecta());
-        
+    listarSensoresValoresPorCasa(){            
+    let datosSensores=[];
+
+      return new Promise((resolve, reject) => {
+
+        conexion.query("SELECT idSensor FROM sensor WHERE idCasa = ?", [this.idCasa] ,(error, result) => {
+                        if(error){
+                            error = [error, "\n<p>ERROR: No se han encontrado valores para el sensor</p>"];
+                            return reject(error);                    
+                        }
+
+                        for(let i = 0; i < result.length; i++){
+                            let sensores = result[i].idSensor;
+                            //console.log(sensores);
+
+                            this.valoresSensores(sensores)
+                            .then(resultValorSensor => {
+                                console.log(resultValorSensor);
+                                datosSensores.push(resultValorSensor);
+                            })
+                            .catch(err => {
+                                console.log(err);
+                            });
+
+                        }
+
+                        resolve(datosSensores);
+                    });    
+              
+        });     
     }  
-*/
+
 
     /**
     *  Mostrar valores por nombre del sensor
@@ -980,20 +979,22 @@ class Usuario{
     listarValorSensorPorNombre(nombSensor){
         if(this.idCasa){
             return new Promise((resolve, reject) => {
-                conexion.query("SELECT valor FROM sensor" +
-                                    "INNER JOIN tienen ON tienen.idSensor = sensor.idSensor" + 
-                                    "INNER JOIN registro ON registro.idRegistro = tienen.idRegistro" +
-                                    "WHERE sensor.`nombSensor` = ? AND sensor.idCasa = ?"+
-                                    "ORDER BY registro.fechaRegistro DESC" +
-                                    "LIMIT 1", [nombSensor, this.idCasa],(error, result) => {
-                        if(error){
-                            error = [error, "\n<p>ERROR: No se han encontrado valores para el sensor</p>"];
-                            return reject(error);                    
-                        }
-                        let resultado = [result, "\n<p>Se han encontrado valores del sensor</p>"];
-                        resolve(resultado);
-                    });    
-                 
+
+                    console.log(idSensor);
+                    return new Promise((resolve, reject) => {
+                        conexion.query("SELECT * FROM sensor INNER JOIN tienen ON tienen.idSensor = sensor.idSensor INNER JOIN registro ON registro.idRegistro = tienen.idRegistro WHERE sensor.`nombSensor` = ? AND sensor.idCasa = ? ORDER BY registro.fechaRegistro ORDER BY registro.fechaRegistro DESC LIMIT 1",  [nombSensor, this.idCasa],(error, resultValorSensor) => {
+                            if(error){
+                                error = [error, "\n<p>ERROR: No se han encontrado valores para el sensor por Nombre</p>"];
+                                return reject(error);                    
+                            }
+                            console.log(resultValorSensor);
+                            let resultado = [resultValorSensor, "\n<p>Se han encontrado valores del sensor por Nombre</p>"];
+            
+                            resolve(resultado);
+                        });  
+                         
+                    });  
+             
             });  
         
         }else{
@@ -1132,9 +1133,7 @@ class Usuario{
         obtenerDatosTema(){
             if(this.idTema){
                 return new Promise((resolve, reject) => {
-                    conexion.query("SELECT *"+
-                                    "FROM tema"+
-                                    "WHERE idTema = ?", [this.idtema],(error, result) => {
+                    conexion.query("SELECT * FROM tema WHERE idTema = ?", [this.idTema],(error, result) => {
                         if(error){
                             error = [error, "\n<p>ERROR: No se han obtenido los valores del tema</p>"]
                             return reject(error);                    

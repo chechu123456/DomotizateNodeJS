@@ -2,7 +2,9 @@
 <script>
     let meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];        
     let fechaActual = new Date();
-    alert(<%-temp%>);
+    let datosSensores = <%-sensoresValoresPorCasa%>
+    //document.write((JSON.stringify(datosSensores)));
+    //document.write(JSON.parse(JSON.stringify(datosSensores[0][0].valor)) );
 </script>
 
 <!DOCTYPE html>
@@ -16,13 +18,14 @@
     <%- include("../partials/_cabecera_panel.ejs"); %>
 </head>
 
+
 <body class="inicioPanel">
     <img src="/public/imagenes/iconos/exit.svg" alt="Cerrar Sesión" class="icoCerrarSesion"></a>
     <div class="fondoPanel">
         <?=menuPanel()?>
         <div class="contenedorPagPanel">
             <div class="titPrincPanel">
-                <h1>Panel Control <?=(!empty($nombCasa)? " - " . $nombCasa : "")?></h1>
+                <h1>Panel Control <% if(nombCasa){ %> - <%=nombCasa %> <%}%></h1>
             </div>
             <div class="contFechaTiempo">
                 <div class="contFechaHora paneles">
@@ -34,7 +37,7 @@
                     <p class="subTitPanelFila1">Tiempo</p>
                     <div class="contIntTiempo">
                         <div class="imgTiempo">
-                            <img src="<%=img%>" alt="Imagen Tiempo" class="imgTiempo">
+                            <img src="<%-img%>" alt="Imagen Tiempo" class="imgTiempo">
                         </div>
                         <div class="textoTiempo">
                             <p class="direccionTiempo"><%-nombreCiudad %></p>
@@ -55,40 +58,40 @@
                             <div class="opcionesLuces ">
                                 <div class="opcLucesBloque1">
                                     <div class="opcL">
-                                        <p><?=(empty($nombresSensoresCasa['luzPasilloPB']) || $nombresSensoresCasa['luzPasilloPB'])? "Pasillo PB" : $nombresSensoresCasa['luzPasilloPB']?></p>
-                                        <input type="checkbox" class="luzPasilloPB" id="btn-switch" <?php echo ($datosSensoresUsuario['luzPasilloPB']) == 1 ?  "checked='checked'" :  ""?> >
+                                        <p><script>( JSON.parse(JSON.stringify(datosSensores[6][0].nombSensorWeb)) ? document.write(JSON.parse(JSON.stringify(datosSensores[6][0].nombSensorWeb))) :  document.write("Pasillo PB")) </script> </p>                                        
+                                        <input type="checkbox" class="luzPasilloPB" id="btn-switch">
                                         <label for="btn-switch" class="lbl-switch">
                                     </div>
                                     <div class="opcL">
-                                        <p><?=(empty($nombresSensoresCasa['luzPasilloPA']))? "Pasillo PA" : $nombresSensoresCasa['luzPasilloPA']?></p>
-                                        <input type="checkbox" class="luzPasilloPA" id="btn-switch2" <?php echo ($datosSensoresUsuario['luzPasilloPA']) == 1 ?  "checked='checked'" :  ""?> >
+                                        <p><script>( JSON.parse(JSON.stringify(datosSensores[7][0].nombSensorWeb)) ? document.write(JSON.parse(JSON.stringify(datosSensores[7][0].nombSensorWeb))) :  document.write("Pasillo PA")) </script> </p>                                        
+                                        <input type="checkbox" class="luzPasilloPA" id="btn-switch2">
                                         <label for="btn-switch2" class="lbl-switch">
                                     </div>
                                     <div class="opcL">
-                                        <p><?=(empty($nombresSensoresCasa['luzCocina']))? "Cocina" : $nombresSensoresCasa['luzCocina']?></p>
-                                        <input type="checkbox" class="luzCocina" id="btn-switch3" <?php echo ($datosSensoresUsuario['luzCocina']) == 1 ?  "checked='checked'" :  ""?> >
+                                        <p><script>( JSON.parse(JSON.stringify(datosSensores[8][0].nombSensorWeb)) ? document.write(JSON.parse(JSON.stringify(datosSensores[8][0].nombSensorWeb))) :  document.write("Cocina")) </script> </p>                                        
+                                        <input type="checkbox" class="luzCocina" id="btn-switch3">
                                         <label for="btn-switch3" class="lbl-switch">
                                     </div>
                                     <div class="opcL">
-                                        <p><?=(empty($nombresSensoresCasa['luzSalon']))? "Salón" : $nombresSensoresCasa['luzSalon']?></p>
-                                        <input type="checkbox" class="luzSalon" id="btn-switch4" <?php echo ($datosSensoresUsuario['luzSalon']) == 1 ?  "checked='checked'" :  ""?> >
+                                        <p><script>( JSON.parse(JSON.stringify(datosSensores[9][0].nombSensorWeb)) ? document.write(JSON.parse(JSON.stringify(datosSensores[9][0].nombSensorWeb))) :  document.write("Salón")) </script> </p>                                        
+                                        <input type="checkbox" class="luzSalon" id="btn-switch4">
                                         <label for="btn-switch4" class="lbl-switch">
                                     </div>
-                                </div>
+                                </div> 
                                 <div class="opcLucesBloque2">
                                     <div class="opcL">
-                                        <p><?=(empty($nombresSensoresCasa['luzBanho']))? "Baño" : $nombresSensoresCasa['luzBanho']?></p>
-                                        <input type="checkbox"  class="luzBanho" id="btn-switch5" <?php echo ($datosSensoresUsuario['luzBanho']) == 1 ?  "checked='checked'" :  ""?> >
+                                        <p><script>( JSON.parse(JSON.stringify(datosSensores[10][0].nombSensorWeb)) ? document.write(JSON.parse(JSON.stringify(datosSensores[10][0].nombSensorWeb))) :  document.write("Baño")) </script> </p>                                        
+                                        <input type="checkbox"  class="luzBanho" id="btn-switch5">
                                         <label for="btn-switch5" class="lbl-switch">
                                     </div>
                                     <div class="opcL">
-                                        <p><?=(empty($nombresSensoresCasa['luzHab1']))? "Habitación 1" : $nombresSensoresCasa['luzHab1']?></p>
-                                        <input type="checkbox"  class="luzHab1" id="btn-switch6" <?php echo ($datosSensoresUsuario['luzHab1']) == 1 ?  "checked='checked'" :  ""?> >
+                                        <p><script>( JSON.parse(JSON.stringify(datosSensores[11][0].nombSensorWeb)) ? document.write(JSON.parse(JSON.stringify(datosSensores[11][0].nombSensorWeb))) :  document.write("Habitación 1")) </script> </p>                                        
+                                        <input type="checkbox"  class="luzHab1" id="btn-switch6">
                                         <label for="btn-switch6" class="lbl-switch">
                                     </div>
                                     <div class="opcL">
-                                        <p><?=(empty($nombresSensoresCasa['luzHab2']))? "Habitación 2" : $nombresSensoresCasa['luzHab2']?></p>
-                                        <input type="checkbox"  class="luzHab2" id="btn-switch7" <?php echo ($datosSensoresUsuario['luzHab2']) == 1 ?  "checked='checked'" :  ""?> >
+                                        <p><script>( JSON.parse(JSON.stringify(datosSensores[12][0].nombSensorWeb)) ? document.write(JSON.parse(JSON.stringify(datosSensores[12][0].nombSensorWeb))) :  document.write("Habitación 2")) </script> </p>                                        
+                                        <input type="checkbox"  class="luzHab2" id="btn-switch7">
                                         <label for="btn-switch7" class="lbl-switch">
                                     </div>
                                    
@@ -100,10 +103,10 @@
                             <div class="contAscensor">
                                 <p class="titAscensor">Ascensor</p>
                                 <div class="plantasAscensor">
-                                    <div class="pb  <?php echo ($datosSensoresUsuario['ascensor'] == 0 || $datosSensoresUsuario['ascensor']) == "E" ?  "plantaSeleccionada" :  ""?> ">
+                                    <div class="pb">
                                         <p>Planta Baja</p>
                                     </div>
-                                    <div class="pa <?php echo ($datosSensoresUsuario['ascensor']) == 1 ?  "plantaSeleccionada" :  ""?>">
+                                    <div class="pa">
                                         <p>Planta Alta</p>
                                     </div>
                                 </div>
@@ -116,32 +119,32 @@
                             <div class="tempHum">
                                 <div class="temp">
                                     <img src="/public/imagenes/iconos/temperatura.svg" alt="Temperatura Casa">
-                                    <p class="valorTemp"><?php echo (isset($datosSensoresUsuario['temperatura'])) ?  $datosSensoresUsuario['temperatura'] . "°C":  "-"?></p>
+                                    <p class="valorTemp"></p>
                                 </div>
                                 <div class="hum">
                                     <img src="/public/imagenes/iconos/humedad.png" alt="Humedad Casa">
-                                    <p class="valorHum"><?php echo (isset($datosSensoresUsuario['humedad'])) ?  $datosSensoresUsuario['humedad'] ."%" :  "-"?></p>
+                                    <p class="valorHum"></p>
                                 </div>
                             </div>
                         </div>
                         <div class="contSensor">
                             <div class="contGaraje paneles">
-                                <p><?=(empty($nombresSensoresCasa['puertaGaraje']))? "Puerta Garaje" : $nombresSensoresCasa['puertaGaraje']?></p>
-                                <input type="checkbox"  class="puertaGaraje" id="btn-switch9" <?php echo ($datosSensoresUsuario['puertaGaraje']) == 1 ?  "checked='checked'" :  ""?>>
+                                <p><script>( JSON.parse(JSON.stringify(datosSensores[3][0].nombSensorWeb)) ? document.write(JSON.parse(JSON.stringify(datosSensores[3][0].nombSensorWeb))) :  document.write("Puerta Garaje")) </script></p>
+                                <input type="checkbox"  class="puertaGaraje" id="btn-switch9" >
                                 <label for="btn-switch9" class="lbl-switch">
                             </div>
                             <div class="contPP paneles">
-                                <p><?=(empty($nombresSensoresCasa['puertaPrincipal']))? "Puerta Principal" : $nombresSensoresCasa['puertaPrincipal']?></p>
-                                <input type="checkbox"  class="puertaPrincipal" id="btn-switch10" <?php echo ($datosSensoresUsuario['puertaPrincipal']) == 1 ?  "checked='checked'" :  ""?>>
+                                <p><script>( JSON.parse(JSON.stringify(datosSensores[4][0].nombSensorWeb)) ? document.write(JSON.parse(JSON.stringify(datosSensores[4][0].nombSensorWeb))) :  document.write("Puerta Principal")) </script></p>
+                                <input type="checkbox"  class="puertaPrincipal" id="btn-switch10" >
                                 <label for="btn-switch10" class="lbl-switch">
                             </div>
                             <div class="ventilador paneles">
-                                <p><?=(empty($nombresSensoresCasa['ventilador']))? "Ventilador" : $nombresSensoresCasa['ventilador']?></p>
-                                <input type="checkbox"  class="ventilador" id="btn-switch8" <?php echo ($datosSensoresUsuario['ventilador']) == 1 ?  "checked='checked'" :  ""?> >
+                                <p><script>( JSON.parse(JSON.stringify(datosSensores[2][0].nombSensorWeb)) ? document.write(JSON.parse(JSON.stringify(datosSensores[2][0].nombSensorWeb))) :  document.write("Ventilador")) </script></p>
+                                <input type="checkbox"  class="ventilador" id="btn-switch8" >
                                 <label for="btn-switch8" class="lbl-switch">
                             </div>
                             <div class="contAlarma paneles">
-                                <p><?=(empty($nombresSensoresCasa['alarma']))? "Alarma Cocina" : $nombresSensoresCasa['alarma']?></p>
+                                <p><script>( JSON.parse(JSON.stringify(datosSensores[5][0].nombSensorWeb)) ? document.write(JSON.parse(JSON.stringify(datosSensores[5][0].nombSensorWeb))) :  document.write("Alarma")) </script></p>
                                 <select name="alarma" id="alarma">
                                     <option disabled selected="selected">-- Seleccionar --</option>
                                     <option value="1">1sg</option>
@@ -163,7 +166,7 @@
             <div class="piePagPanel">
                 <div class="estadoArduino">
                     <p>Estado: <span class="textoEstadoArduino">Conectado</span></p>
-                    <div class="formaCirculo <?php echo ($datosSensoresUsuario['arduino']) == 0 ?  "desconectado" :  "conectado"?>"></div>
+                    <div class="formaCirculo"></div>
                 </div>
                 <div class="logoPagPanel">
                     <p><a href="./index.php">DOMOTIZATE</a></p>
@@ -173,6 +176,8 @@
     </div>
 </body>
     <script>
+        
+
         
         //Solicitar permiso al cargar la página
         document.addEventListener("DOMContentLoaded", function(){
@@ -314,6 +319,33 @@
 
          
         $(document).ready(function(){
+
+            ( JSON.parse(JSON.stringify(datosSensores[6][0].valor == 1)) ? document.getElementById("btn-switch").checked = true : null );
+            ( JSON.parse(JSON.stringify(datosSensores[7][0].valor == 1)) ? document.getElementById("btn-switch2").checked = true : null );
+            ( JSON.parse(JSON.stringify(datosSensores[8][0].valor == 1)) ? document.getElementById("btn-switch3").checked = true : null );
+            ( JSON.parse(JSON.stringify(datosSensores[9][0].valor == 1)) ? document.getElementById("btn-switch4").checked = true : null );
+            ( JSON.parse(JSON.stringify(datosSensores[10][0].valor == 1)) ? document.getElementById("btn-switch5").checked = true : null );
+            ( JSON.parse(JSON.stringify(datosSensores[11][0].valor == 1)) ? document.getElementById("btn-switch6").checked = true : null );
+            ( JSON.parse(JSON.stringify(datosSensores[12][0].valor == 1)) ? document.getElementById("btn-switch7").checked = true : null );
+
+            ( JSON.parse(JSON.stringify(datosSensores[3][0].valor == 1)) ? document.getElementById("btn-switch9").checked = true : null );
+            ( JSON.parse(JSON.stringify(datosSensores[4][0].valor == 1)) ? document.getElementById("btn-switch10").checked = true : null );
+            ( JSON.parse(JSON.stringify(datosSensores[2][0].valor == 1)) ? document.getElementById("btn-switch8").checked = true : null );
+
+            
+            //Ascensor
+            ( JSON.parse(JSON.stringify(datosSensores[1][0].valor == "0")) ||  JSON.parse(JSON.stringify(datosSensores[1][0].valor == "E"  )) ?  document.getElementsByClassName("pb")[0].className = "pb plantaSeleccionada" : "" );
+            ( JSON.parse(JSON.stringify(datosSensores[1][0].valor == "1" )) ? document.getElementsByClassName("pa")[0].className = "pa plantaSeleccionada" : "" );
+
+            //Temperatura y Humedad
+            ( JSON.parse(JSON.stringify(datosSensores[16][0].valor))  ? document.getElementsByClassName("valorTemp")[0].innerHTML = JSON.parse(JSON.stringify(datosSensores[16][0].valor)) + "ºC": document.getElementsByClassName("valorTemp")[0].innerHTML = "-" );
+            ( JSON.parse(JSON.stringify(datosSensores[17][0].valor))  ? document.getElementsByClassName("valorHum")[0].innerHTML = JSON.parse(JSON.stringify(datosSensores[17][0].valor)) + "%": document.getElementsByClassName("valorHum")[0].innerHTML = "-" );
+
+            //Estado arduino
+            ( JSON.parse(JSON.stringify(datosSensores[0][0].valor) == 1 ) ? $(".formaCirculo").addClass("conectado") : $(".formaCirculo").addClass("desconectado") );
+
+
+
 
             if($(".formaCirculo").attr("class").split(' ')[1] == "conectado"){
                 $(".textoEstadoArduino").html("Conectado");
@@ -470,14 +502,14 @@
             //AJAX - Guardar cambios en la bd
             $.ajax({
                 method: "POST",
-                url: "actualizarDatosSensoresBD.php",            
+                url: "/admin/actualizarDatosSensoresBD",
                 data: {
                     nombSensor: nombSensor,
                     valor: valor,
                 },
             })
             .done(function(data) {
-               console.log(data);
+               //console.log(data);
             })
             .fail(function( textStatus ) {
                 swal("ERROR!", "No se ha podido realizar esta acción", "warning");
