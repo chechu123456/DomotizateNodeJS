@@ -890,8 +890,9 @@ class Usuario{
             this.buscarIdSensorNomb(nombSensor)
                 .then( resultIdSensorNomb => {
                     console.log(resultIdSensorNomb);
+                    console.log(resultIdSensorNomb[0][0].idSensor);
 
-                    this.crearTienen(resultIdSensorNomb[0].idSensor,  ultRegistro)
+                    this.crearTienen(resultIdSensorNomb[0][0].idSensor,  ultRegistro)
                             .then( resultTienen => {
                                 console.log(resultTienen);
                             } ).catch( err => {

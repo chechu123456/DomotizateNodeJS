@@ -262,11 +262,8 @@ controller.registrarUsuario = (req, res)=>{
 controller.actualizarSensoresBD = (req, res)=>{
     let nombSensor = req.body.nombSensor;
     let valor = req.body.valor;
-    user.setIdCasa = req.session.idCasa;
-
+    user.setIdCasa(req.session.idCasa);
     user.crearTienenRegistro(nombSensor, valor);
-    console.log("-----------!!!!!!!!!!!!!-----------------");
-    console.log(user.idCasa);
 };
 
 controller.cerrarSession = (req, res)=>{
