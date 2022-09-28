@@ -175,28 +175,16 @@ controller.controlarPanel = (req, res)=>{
         //console.log(user.buscarUsuario());
     
         user.buscarUsuarioBD()
-            .then( result => {
-                console.log("datos de buscar Usuario: ");
-                console.log(result);
+        .then( result => {
+            console.log("datos de buscar Usuario: ");
+            console.log(result);
 
-                //return conexion.query( str_sql_3 );
-            } )/*
-            .then( result => {
-                otherRows = result;
-                //return mydb.close();
-            } , err => {
-                //return mydb.close().then( () => { throw err; } )
-            })
-            .then( () => {
-                // do something with someRows and otherRows
-                //console.log("someRows: " + someRows[0]['itemid']);
-                //console.log(`otherRows: ${otherRows[0]['itemid']}`);
-    
-            })*/.catch( err => {
-                // handle the error
-                console.log(err.message);
-                }   
-            );
+            //return conexion.query( str_sql_3 );
+        } )
+        .catch( err => {
+            // handle the error
+            console.log(err.message);
+        });
     }
     
   
@@ -264,6 +252,77 @@ controller.actualizarSensoresBD = (req, res)=>{
     let valor = req.body.valor;
     user.setIdCasa(req.session.idCasa);
     user.crearTienenRegistro(nombSensor, valor);
+};
+
+controller.pasarDatosPrincipales = (req, res)=>{
+ 
+    user.setNickname(req.session.usuarioNickname);
+    user.setIdCasa(req.session.idCasa);
+    user.setIdTema(req.session.idTema);
+
+    //Saber desde que url se está accediendo
+    let web = req.url.split("/");
+    console.log(web[web.length-1]);
+    web = web[web.length-1];
+
+    user.recuperarDatosUsuarioBD()
+    .then(resultDatosUsuario => {
+
+        console.log(resultDatosUsuario);
+
+        user.listarSensoresValoresPorCasa()
+        .then(resulSensoresValoresPorCasa => {
+            console.log("--------------");
+
+            console.log(resulSensoresValoresPorCasa);
+
+            user.buscarNombreCasa()
+            .then(resultNombCasa => {
+                console.log(resultNombCasa[0][0].nombCasa);
+
+                user.obtenerDatosTema()
+                .then(resultDatosTema => {
+                    console.log(resultDatosTema)
+                    var enviarDatos = {
+                        datosUsuario: resultDatosUsuario,
+                        sensoresValoresPorCasa: JSON.stringify(resulSensoresValoresPorCasa),
+                        datosTema: resultDatosTema,
+                        nombCasa: resultNombCasa[0][0].nombCasa
+                    }
+                    
+                    if(web == "cambiarTema"){
+                        res.render("panel/cambiarTema", enviarDatos);
+                    }else if(web == "graficas"){
+                        res.render("panel/graficas", enviarDatos);
+                    }else if(web == "configuracion"){
+                        res.render("panel/configuracion", enviarDatos);
+                    }
+
+                    console.log(req.body);                    
+                    console.log(req.session.usuarioNickname);
+                    /*
+                    user.setNickname(req.session.usuarioNickname);
+                    console.log("----------------------------");
+                    console.log(user.getNickname());
+                    console.log("----------------------------");
+                    */
+                })
+                .catch(err => {
+                    console.log(err.message);
+                });              
+            })
+            .catch(err =>{
+                console.log(err);
+            });
+        })
+        .catch(err => {
+            console.log(err.message);
+        });
+        
+    })
+    .catch(err => {
+        console.log(err.message);
+    });
 };
 
 controller.cerrarSession = (req, res)=>{

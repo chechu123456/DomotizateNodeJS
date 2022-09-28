@@ -1,13 +1,8 @@
-<?php
-session_start();
-include("../inc.php");
-comprobarSesionVacia();
+<script>
+    let datosSensores = <%-sensoresValoresPorCasa%>;
+    //document.write((JSON.stringify(datosSensores)));
 
-$infoUsuario = $listado->recuperarDatosUsuario($_SESSION['nickname']);
-$nombCasa = $listado->buscarNombreCasa($_SESSION['idCasa']);
-$datosSensoresUsuario = $listado->listarSensoresValoresPorCasa($_SESSION['idCasa']);
-
-?>
+</script>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -17,16 +12,16 @@ $datosSensoresUsuario = $listado->listarSensoresValoresPorCasa($_SESSION['idCasa
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DOMOTIZATE</title>
-    <?php echo cabeceraPaginasPanel(); ?>
+    <%- include("../partials/_cabecera_panel.ejs"); %>
 </head>
 
 <body class="configPanel temaPanel">
-    <img src="../imagenes/iconos/exit.svg" alt="Cerrar Sesión" class="icoCerrarSesion"></a>
+    <img src="/public/imagenes/iconos/exit.svg" alt="Cerrar Sesión" class="icoCerrarSesion"></a>
     <div class="fondoPanel">
-        <?= menuPanel() ?>
+        <%- include("../partials/_menupanel.ejs"); %>
         <div class="contenedorPagPanel ">
             <div class="titPrincPanel">
-                <h1>Panel Control <?= (!empty($nombCasa) ? " - " . $nombCasa : "") ?></h1>
+                <h1>Panel Control <% if(nombCasa){ %> - <%=nombCasa %> <%}%></h1>
             </div>
 
             <div class="contConfiguracion paneles">
@@ -97,7 +92,7 @@ $datosSensoresUsuario = $listado->listarSensoresValoresPorCasa($_SESSION['idCasa
             <div class="piePagPanel">
                 <div class="estadoArduino">
                     <p>Estado: <span class="textoEstadoArduino">Conectado</span></p>
-                    <div class="formaCirculo <?php echo ($datosSensoresUsuario['arduino']) == 0 ?  "desconectado" :  "conectado" ?>"></div>
+                    <div class="formaCirculo"></div>
                 </div>
                 <div class="logoPagPanel">
                     <p><a href="./index.php">DOMOTIZATE</a></p>
@@ -162,8 +157,7 @@ $datosSensoresUsuario = $listado->listarSensoresValoresPorCasa($_SESSION['idCasa
 
 
         $(document).on("click", ".icoCerrarSesion", function() {
-            window.location.href = "<?php echo localizacion() . "funciones/cerrarSesion.php" ?>";
-
+            window.location.href = "/admin/cerrarSesion";
         });
 
 
@@ -176,7 +170,7 @@ $datosSensoresUsuario = $listado->listarSensoresValoresPorCasa($_SESSION['idCasa
                     method: "POST",
                     url: "actualizarValoresPanel.php",
                     data: {
-                        idCasa: <?= $_SESSION['idCasa'] ?>,
+                        //idCasa: <?= $_SESSION['idCasa'] ?>,
                     },
                 })
                 .done(function(data) {
@@ -215,6 +209,11 @@ $datosSensoresUsuario = $listado->listarSensoresValoresPorCasa($_SESSION['idCasa
         $(document).ready(function() {
             /* Poner fondo sobre la opción seleccionada en el menu vertical */
             $(".iconoMP:nth-child(3)").css("background-color", "#293B97");
+
+            
+            //Estado arduino
+            ( JSON.parse(JSON.stringify(datosSensores[0][0].valor) == 1 ) ? $(".formaCirculo").addClass("conectado") : $(".formaCirculo").addClass("desconectado") );
+
 
             if ($(".formaCirculo").attr("class").split(' ')[1] == "conectado") {
                 $(".textoEstadoArduino").html("Conectado");

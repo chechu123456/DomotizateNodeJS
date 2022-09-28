@@ -14,6 +14,13 @@ app.get("/index",controlador.controlarPanel);
 
 app.post("/actualizarDatosSensoresBD",controlador.actualizarSensoresBD);
 
+app.get("/graficas", controlador.pasarDatosPrincipales);
+
+app.get("/cambiarTema", controlador.pasarDatosPrincipales);
+
+
+app.get("/configuracion", controlador.pasarDatosPrincipales);
+
 app.get("/cerrarSesion", controlador.cerrarSession);
 
 //app.post("/index", controlador.controlarPanel);

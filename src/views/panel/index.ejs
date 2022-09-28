@@ -22,7 +22,8 @@
 <body class="inicioPanel">
     <img src="/public/imagenes/iconos/exit.svg" alt="Cerrar Sesión" class="icoCerrarSesion"></a>
     <div class="fondoPanel">
-        <?=menuPanel()?>
+        <%- include("../partials/_menupanel.ejs"); %>
+
         <div class="contenedorPagPanel">
             <div class="titPrincPanel">
                 <h1>Panel Control <% if(nombCasa){ %> - <%=nombCasa %> <%}%></h1>
