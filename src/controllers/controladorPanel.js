@@ -135,7 +135,7 @@ controller.controlarPanel = (req, res)=>{
                                 img: img,
                                 datosUsuario: resultDatosUsuario,
                                 sensoresValoresPorCasa: JSON.stringify(resulSensoresValoresPorCasa),
-                                datosTema: resultDatosTema,
+                                datosTema: JSON.stringify(resultDatosTema[0]),
                                 nombCasa: resultNombCasa[0][0].nombCasa
                             }
                             
@@ -323,6 +323,47 @@ controller.pasarDatosPrincipales = (req, res)=>{
     .catch(err => {
         console.log(err.message);
     });
+};
+
+controller.actualizarDatosTema = (req, res)=>{
+    user.setIdCasa(req.session.idCasa);
+    console.log(req.body);
+
+    user.idTema = req.session.idTema; 
+    console.log(user.idTema);
+
+    if(req.body.defecto){
+        let colorFondoPagPanel = "";
+        let colorFondoPanel = "";
+        let colorTitulosPanel = "";
+        let colorNombSensores = "";
+        let tamanoLetraTit = "";
+        let tamanoLetraNombSensores = "";
+
+       
+        user.modificarTema(colorFondoPagPanel, colorFondoPanel, colorTitulosPanel, colorNombSensores, tamanoLetraTit, tamanoLetraNombSensores);
+       
+    }else{
+
+        let colorFondoPagPanel = req.body.colorFondoPagPanel;
+        let colorFondoPanel = req.body.colorFondoPanel;
+        let colorTitulosPanel = req.body.colorTitulosPanel;
+        let colorNombSensores = req.body.colorNombSensores;
+        let tamanoLetraTit = req.body.tamanoLetraTit;
+        let tamanoLetraNombSensores = req.body.tamanoLetraNombSensores;
+        /*
+        console.log(colorFondoPagPanel);
+        console.log(colorFondoPanel);
+        console.log(colorTitulosPanel);
+        console.log(colorNombSensores);
+        console.log(tamanoLetraTit);
+        console.log(tamanoLetraNombSensores);
+            */
+        user.modificarTema(colorFondoPagPanel, colorFondoPanel, colorTitulosPanel, colorNombSensores, tamanoLetraTit, tamanoLetraNombSensores);
+
+    }
+    
+
 };
 
 controller.cerrarSession = (req, res)=>{

@@ -2,7 +2,12 @@
 <script>
     let meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];        
     let fechaActual = new Date();
-    let datosSensores = <%-sensoresValoresPorCasa%>
+    let datosSensores = <%-sensoresValoresPorCasa%>;
+    let datosTema = <%-datosTema%>;
+    datosTema = JSON.parse(JSON.stringify(datosTema[0]))
+    //document.write(JSON.stringify(datosTema));
+    //document.write(JSON.parse(JSON.stringify(datosTema.colorFondoPagPanel)) );
+
     //document.write((JSON.stringify(datosSensores)));
     //document.write(JSON.parse(JSON.stringify(datosSensores[0][0].valor)) );
 </script>
@@ -267,7 +272,7 @@
             //AJAX - Guardar cambios en la bd
             $.ajax({
                 method: "POST",
-                url: "actualizarValoresPanel.php",            
+                url: " /admin/actualizarValoresPanel",            
                 data: {
                     idCasa: <?=$_SESSION['idCasa']?>,
                 },
@@ -364,21 +369,22 @@
 
 
             /******* CAMBIAR TEMA *********/
-            /*
-            var colorFondoPagPanel = "<?=(empty($datosTema['colorFondoPagPanel'])) ? "NULO": $datosTema['colorFondoPagPanel']?>";            
-            var colorFondoPanel = "<?=(empty($datosTema['colorFondoPanel'])) ? "NULO": $datosTema['colorFondoPanel']?>";
-            var colorTitulosPanel = "<?=(empty($datosTema['colorTitulosPanel'])) ? "NULO": $datosTema['colorTitulosPanel']?>";
-            var colorNombSensores = "<?=(empty($datosTema['colorNombSensores'])) ? "NULO": $datosTema['colorNombSensores']?>";
-            var tamanoLetraTit = "<?=(empty($datosTema['tamanoLetraTit'])) ? "NULO": $datosTema['tamanoLetraTit']?>";
-            var tamanoLetraNombSensores = "<?=(empty($datosTema['tamanoLetraNombSensores'])) ? "NULO": $datosTema['tamanoLetraNombSensores']?>";
-            */
-            console.log(colorFondoPagPanel);
+
+            let colorFondoPagPanel = (datosTema.colorFondoPagPanel ?  datosTema.colorFondoPagPanel : "NULO" );
+            let colorFondoPanel = (datosTema.colorFondoPanel ?  datosTema.colorFondoPanel : "NULO" );
+            let colorTitulosPanel = (datosTema.colorTitulosPanel ?  datosTema.colorTitulosPanel : "NULO" );
+            let colorNombSensores = (datosTema.colorNombSensores ?   datosTema.colorNombSensores : "NULO" );
+            let tamanoLetraTit = (datosTema.tamanoLetraTit ?   datosTema.tamanoLetraTit : "NULO" );
+            let tamanoLetraNombSensores = (datosTema.tamanoLetraNombSensores ? datosTema.tamanoLetraNombSensores : "NULO" );
+
+            console.log(colorFondoPanel);
+
             
             if(colorFondoPagPanel == "NULO"){
                 $(".fondoPanel").css("background-image", "radial-gradient(circle at 25.82% -16.45%, #a1a3e3 0, #5f6ebb 50%, #003e94 100%)");
             }else{
                 $(".fondoPanel").css("background-image", "initial");
-                $(".fondoPanel").css("background-color", colorFondoPagPanel);
+                $(".fondoPanel").css("background-color", colorFondoPagPanel );
             }
 
             if(colorFondoPanel == "NULO"){

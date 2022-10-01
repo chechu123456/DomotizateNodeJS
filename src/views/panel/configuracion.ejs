@@ -208,7 +208,7 @@ $datosSensoresUsuario = $listado->listarSensoresValoresPorCasa($_SESSION['idCasa
             //AJAX - Guardar cambios en la bd
             $.ajax({
                     method: "POST",
-                    url: "actualizarValoresPanel.php",
+                    url: " /admin/actualizarValoresPanel",
                     data: {
                         idCasa: <?= $_SESSION['idCasa'] ?>,
                     },

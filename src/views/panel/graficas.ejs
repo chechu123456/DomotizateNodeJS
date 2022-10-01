@@ -481,7 +481,7 @@ for ($i = 0; $i < count($registrosHumedadAño); $i++) {
             //AJAX - Guardar cambios en la bd
             $.ajax({
                     method: "POST",
-                    url: "actualizarValoresPanel.php",
+                    url: " /admin/actualizarValoresPanel",
                     data: {
                         idCasa: <?= $_SESSION['idCasa'] ?>,
                     },

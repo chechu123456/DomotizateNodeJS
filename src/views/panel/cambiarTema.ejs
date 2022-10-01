@@ -123,7 +123,7 @@
 
             $.ajax({
                     method: "POST",
-                    url: "./actualizarDatosTema.php",
+                    url: "/admin/actualizarDatosTema",
                     data: datos,
                 })
                 .done(function(data) {
@@ -140,7 +140,7 @@
 
             $.ajax({
                 method: "POST",
-                url: "./actualizarDatosTema.php",
+                url: "/admin/actualizarDatosTema",
                 data: {
                     defecto: "1",
                 },
@@ -168,7 +168,7 @@
             //AJAX - Guardar cambios en la bd
             $.ajax({
                     method: "POST",
-                    url: "actualizarValoresPanel.php",
+                    url: " /admin/actualizarValoresPanel",
                     data: {
                         //idCasa: <?= $_SESSION['idCasa'] ?>,
                     },

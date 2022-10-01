@@ -1098,21 +1098,9 @@ class Usuario{
     *  @access public
     *  @return boolean
     */  
-    modificarTema( colorFondoPagPanel, colorFondoPanel, colorTitulosPanel, colorNombSensores, tamanoLetraTit, tamanoLetraNombSensores ){
-        valores = [];
-        (colorFondoPagPanel ?  valores['colorFondoPagPanel']="colorFondoPagPanel=" + colorFondoPagPanel : valores['colorFondoPagPanel']="colorFondoPagPanel=NULL");
-        (colorFondoPanel ?  valores['colorFondoPanel']="colorFondoPanel='" + colorFondoPanel : valores['colorFondoPanel']="colorFondoPanel=NULL");
-        (colorTitulosPanel ?  valores['colorTitulosPanel']="colorTitulosPanel=" + colorTitulosPanel : valores['colorTitulosPanel']="colorTitulosPanel=NULL");
-        (colorNombSensores ?  valores['colorNombSensores']="colorNombSensores='" + colorNombSensores : valores['colorNombSensores']="colorNombSensores=NULL");
-        (tamanoLetraTit ?  valores['tamanoLetraTit']="tamanoLetraTit='" + tamanoLetraTit : valores['tamanoLetraTit']="tamanoLetraTit=NULL");
-        (tamanoLetraNombSensores ?  valores['tamanoLetraNombSensores']="tamanoLetraNombSensores=" + tamanoLetraNombSensores : valores['tamanoLetraNombSensores']="tamanoLetraNombSensores=NULL");
-        
-        datos = valores.join(",");
-
+    modificarTemaBD(datos){
         return new Promise((resolve, reject) => {
-            conexion.query("UPDATE tema"+
-                            "SET ?"+
-                            "WHERE idTema = ?", [valores, this.idTema],(error, result) => {
+            conexion.query("UPDATE tema SET "+ datos +" WHERE idTema = ?", [this.idTema],(error, result) => {
                 if(error){
                     error = [error, "\n<p>ERROR: No se ha modificado el tema del usuario</p>"];
                     return reject(error);                    
@@ -1122,6 +1110,37 @@ class Usuario{
             });
              
         });  
+    }
+
+    modificarTema( colorFondoPagPanel, colorFondoPanel, colorTitulosPanel, colorNombSensores, tamanoLetraTit, tamanoLetraNombSensores ){
+        let valores = new Array();
+        (colorFondoPagPanel ?  valores['colorFondoPagPanel']="colorFondoPagPanel='" + colorFondoPagPanel + "'" : valores['colorFondoPagPanel']="colorFondoPagPanel=NULL");
+        (colorFondoPanel ?  valores['colorFondoPanel']="colorFondoPanel='" + colorFondoPanel + "'": valores['colorFondoPanel']="colorFondoPanel=NULL");
+        (colorTitulosPanel ?  valores['colorTitulosPanel']="colorTitulosPanel='" + colorTitulosPanel + "'" : valores['colorTitulosPanel']="colorTitulosPanel=NULL");
+        (colorNombSensores ?  valores['colorNombSensores']="colorNombSensores='" + colorNombSensores + "'" : valores['colorNombSensores']="colorNombSensores=NULL");
+        (tamanoLetraTit ?  valores['tamanoLetraTit']="tamanoLetraTit='" + tamanoLetraTit + "'": valores['tamanoLetraTit']="tamanoLetraTit=NULL");
+        (tamanoLetraNombSensores ?  valores['tamanoLetraNombSensores']="tamanoLetraNombSensores='" + tamanoLetraNombSensores + "'" : valores['tamanoLetraNombSensores']="tamanoLetraNombSensores=NULL");
+        
+        //let datos = valores['colorFondoPagPanel'] + ", " +valores['colorFondoPanel'];
+        let datos= "";
+        //Coger longitud de un array asociativo
+        console.log(Object.getOwnPropertyNames(valores).length - 1); 
+        for (var propiedad in valores){
+            datos = datos + " " + valores[propiedad] + ",";
+        }
+
+        datos = datos.substring(1, datos.length - 1);
+        console.log(datos);
+
+
+        this.modificarTemaBD(datos)
+        .then(result => {
+            console.log(result);
+        })
+        .catch(err => {
+            console.log(err);
+        })
+       
 
     }
 

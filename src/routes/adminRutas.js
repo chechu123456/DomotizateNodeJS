@@ -18,12 +18,12 @@ app.get("/graficas", controlador.pasarDatosPrincipales);
 
 app.get("/cambiarTema", controlador.pasarDatosPrincipales);
 
+app.post("/actualizarDatosTema", controlador.actualizarDatosTema);
 
 app.get("/configuracion", controlador.pasarDatosPrincipales);
 
 app.get("/cerrarSesion", controlador.cerrarSession);
 
-//app.post("/index", controlador.controlarPanel);
 
 
 //app.post("/index", controlador.controlarSesion);
