@@ -1,7 +1,10 @@
 const { resolveInclude } = require("ejs");
 let db = require("../database/db");
+let pool = require("../database/pool");
+
 //const mysql = require("mysql2");
 const conexion = db();
+const conexPool = pool();
 
 class Usuario{
     /**
@@ -770,9 +773,12 @@ class Usuario{
     *  @return boolean
     */  
     actualizarNombSensorWeb(nombSensor, valor){
-        
+ 
+
         return new Promise((resolve, reject) => {
-            conexion.query("UPDATE sensor SET nombSensorWeb = ? WHERE idCasa = ? AND  nombSensor = ? ", [valor, this.idCasa,  nombSensor],(error, result) => {
+
+            var c =  conexion.query("UPDATE sensor SET nombSensorWeb = ? WHERE idCasa = ? AND  nombSensor = ? ", [valor, this.idCasa,  nombSensor],(error, result) => {
+
                 if(error){
                     error = [error, "<p>ERROR: No se ha actualizado el nombre del sensor en la web</p>"]
                     return reject(error);                    
@@ -780,7 +786,7 @@ class Usuario{
                 let resultado = [result, "<p>Actualizado nombre del sensor en la web</p>"]
                 resolve(resultado);
             });
-             
+
         });  
         
     }

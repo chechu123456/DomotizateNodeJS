@@ -259,7 +259,7 @@ controller.pasarDatosPrincipales = (req, res)=>{
     user.setNickname(req.session.usuarioNickname);
     user.setIdCasa(req.session.idCasa);
     user.setIdTema(req.session.idTema);
-
+    let localidad = req.session.localidad;
     //Saber desde que url se está accediendo
     let web = req.url.split("/");
     console.log(web[web.length-1]);
@@ -287,6 +287,7 @@ controller.pasarDatosPrincipales = (req, res)=>{
                         datosUsuario: resultDatosUsuario,
                         sensoresValoresPorCasa: JSON.stringify(resulSensoresValoresPorCasa),
                         datosTema: resultDatosTema,
+                        localidad: localidad,
                         nombCasa: resultNombCasa[0][0].nombCasa
                     }
                     
@@ -300,6 +301,8 @@ controller.pasarDatosPrincipales = (req, res)=>{
 
                     console.log(req.body);                    
                     console.log(req.session.usuarioNickname);
+                    console.log(localidad);
+
                     /*
                     user.setNickname(req.session.usuarioNickname);
                     console.log("----------------------------");
@@ -358,13 +361,66 @@ controller.actualizarDatosTema = (req, res)=>{
         console.log(colorNombSensores);
         console.log(tamanoLetraTit);
         console.log(tamanoLetraNombSensores);
-            */
+        */
         user.modificarTema(colorFondoPagPanel, colorFondoPanel, colorTitulosPanel, colorNombSensores, tamanoLetraTit, tamanoLetraNombSensores);
 
     }
     
 
 };
+
+controller.actualizarLocalidad = (req, res)=>{
+    user.setNickname(req.session.usuarioNickname);
+
+    user.editarLocalidad(req.body.localidad)
+    .then(resultEditLocal => {
+        console.log(resultEditLocal);
+        res.send("Ok");
+    })
+    .catch(err =>{
+        console.log(err);
+    })
+};
+
+
+controller.actualizarDatosConfiguracion = (req, res)=>{
+    user.setNickname(req.session.usuarioNickname);
+    user.setIdCasa(req.session.idCasa);
+
+    let lCocina = req.body.lCocina;
+    let lSalon = req.body.lSalon;
+    let bano = req.body.bano;
+    let lHab1 = req.body.lHab1;
+    let lHab2 = req.body.lHab2;
+    let lPlantaA = req.body.lPlantaA;
+    let lPlantaB = req.body.lPlantaB;
+    let alarma = req.body.alarma;
+    let puertaGaraje = req.body.puertaGaraje;
+    let puertaPrincipal = req.body.puertaPrincipal;
+    let ventilador = req.body.ventilador;
+
+
+    let nombresSensorWeb = new Array(lCocina, lSalon, bano, lHab1, lHab2, lPlantaA, lPlantaB, alarma, puertaGaraje, puertaPrincipal, ventilador);
+    let nombresSensor = new Array("luzCocina","luzSalon","luzBanho","luzHab1","luzHab2","luzPasilloPA","luzPasilloPB","alarma","puertaGaraje", "puertaPrincipal", "ventilador");
+    console.log(nombresSensorWeb);
+    for(let i = 0; i < nombresSensorWeb.length; i++){
+        console.log(nombresSensor[i] + "-------->"+nombresSensorWeb[i])
+        
+        user.actualizarNombSensorWeb( nombresSensor[i], nombresSensorWeb[i])
+        .then(resultActualizarNombSensorWeb => {
+            console.log(resultActualizarNombSensorWeb);
+            //res.send("Ok");
+        })
+        .catch(err =>{
+            console.log(err);
+        })
+
+
+        
+    }
+    
+};
+
 
 controller.cerrarSession = (req, res)=>{
     if(req.session){

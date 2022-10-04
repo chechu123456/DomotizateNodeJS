@@ -22,6 +22,12 @@ app.post("/actualizarDatosTema", controlador.actualizarDatosTema);
 
 app.get("/configuracion", controlador.pasarDatosPrincipales);
 
+app.post("/actualizarLocalidad", controlador.actualizarLocalidad);
+
+app.post("/actualizarDatosConfiguracion", controlador.actualizarDatosConfiguracion);
+
+
+
 app.get("/cerrarSesion", controlador.cerrarSession);
 
 
