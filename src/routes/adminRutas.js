@@ -26,6 +26,11 @@ app.post("/actualizarLocalidad", controlador.actualizarLocalidad);
 
 app.post("/actualizarDatosConfiguracion", controlador.actualizarDatosConfiguracion);
 
+app.get("/logCasa", controlador.datosLog);
+
+app.get("/cogerDatosLog", controlador.cogerDatosLog);
+
+app.post("/cogerDatosLog", controlador.cogerDatosLog);
 
 
 app.get("/cerrarSesion", controlador.cerrarSession);

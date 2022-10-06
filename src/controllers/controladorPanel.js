@@ -4,6 +4,7 @@ const path = require("path");
 //const { use } = require("../routes/landingPage");
 //const Usuario = require("../Clases/Usuario")
 const request = require('request');
+const { resolve } = require("path");
 const xml2js = require('xml2js').parseString;;
 
 const controller = {};
@@ -420,6 +421,54 @@ controller.actualizarDatosConfiguracion = (req, res)=>{
     }
     
 };
+
+controller.datosLog = (req, res)=>{
+    user.setNickname(req.session.usuarioNickname);
+    user.setIdCasa(req.session.idCasa);
+
+    user.recuperarDatosUsuarioBD()
+    .then(resultDatosUsuario => {
+
+        console.log(resultDatosUsuario);
+
+        user.buscarNombreCasa()
+        .then(resultNombCasa => {
+
+            var enviarDatos = {
+                datosUsuario: resultDatosUsuario,
+                nombCasa: resultNombCasa[0][0].nombCasa
+            }
+
+            res.render("panel/logCasa", enviarDatos);
+        })
+        .catch(err =>{
+            console.log(err);
+        });
+    })
+    .catch(err => {
+        console.log(err.message);
+    });
+
+};
+
+controller.cogerDatosLog = async (req, res)=>{
+    user.setNickname(req.session.usuarioNickname);
+    user.setIdCasa(req.session.idCasa);
+
+    user.listarRegistrosCasa()
+    .then(resultRegistrosCasa => {
+        console.log(resultRegistrosCasa);
+        res.send(resultRegistrosCasa);
+    })
+    .catch(err =>{
+        console.log(err);
+    });
+    
+    
+    
+};
+
+
 
 
 controller.cerrarSession = (req, res)=>{

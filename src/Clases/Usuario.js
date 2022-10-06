@@ -1,10 +1,8 @@
 const { resolveInclude } = require("ejs");
 let db = require("../database/db");
-let pool = require("../database/pool");
 
 //const mysql = require("mysql2");
 const conexion = db();
-const conexPool = pool();
 
 class Usuario{
     /**
@@ -675,29 +673,20 @@ class Usuario{
      *  @access public
      *  @return object
      */  
-    listarRegistrosCasa(){
-        if(!(this.idCasa)){
-            return new Promise((resolve, reject) => {
-                conexion.query("SELECT sensor.nombsensor, registro.fechaRegistro, registro.valor, registro.nickname"+
-                            "FROM registro"+
-                            "INNER JOIN tienen ON tienen.idRegistro = registro.idRegistro"+
-                            "INNER JOIN sensor ON tienen.idSensor = sensor.idSensor"+
-                            "INNER JOIN casa ON casa.idCasa = sensor.idCasa"+
-                            "WHERE casa.idCasa =$idCasa"+
-                            "ORDER BY fechaRegistro DESC", (error, result) => {
-                    if(error){
-                        error = [error, "<p>No se han obtenido los registros de la casa</p>"]
-                        return reject(error);                    
-                    }
-                    let resultado = [result, "<p>Registro actualizado</p>"];
-                    resolve(resultado);
-                });
-                 
-            });
+    async listarRegistrosCasa(){
+
+        return new Promise((resolve, reject) => {
+            var c = conexion.query("SELECT sensor.nombsensor, registro.fechaRegistro, registro.valor, registro.nickname FROM registro INNER JOIN tienen ON tienen.idRegistro = registro.idRegistro INNER JOIN sensor ON tienen.idSensor = sensor.idSensor INNER JOIN casa ON casa.idCasa = sensor.idCasa WHERE casa.idCasa = ? ORDER BY fechaRegistro DESC", [this.idCasa], (error, result) => {
+                if(error){
+                    error = [error, "<p>No se han obtenido los registros de la casa</p>"]
+                    return reject(error);                    
+                }
+                let resultado = [result, "<p>Registro de la casa Encontrados</p>"];
+                resolve(JSON.stringify(result));
+            });          
+                
+        });
         
-        }else{
-           return "ERROR: No se pudo obtener el listado de registros de la casa porque no se tiene el IdCasa";
-        }
     }
 
     /**
