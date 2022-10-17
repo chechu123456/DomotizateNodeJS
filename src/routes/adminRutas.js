@@ -16,6 +16,11 @@ app.post("/actualizarDatosSensoresBD",controlador.actualizarSensoresBD);
 
 app.get("/graficas", controlador.pasarDatosPrincipales);
 
+app.post("/datosGraficasTempHum", controlador.datosGraficasTempHum);
+app.post("/datosGraficasTempHumMin", controlador.datosGraficasTempHumMin);
+app.post("/datosGraficasTempHumMax", controlador.datosGraficasTempHumMax);
+
+
 app.get("/cambiarTema", controlador.pasarDatosPrincipales);
 
 app.post("/actualizarDatosTema", controlador.actualizarDatosTema);
@@ -28,10 +33,11 @@ app.post("/actualizarDatosConfiguracion", controlador.actualizarDatosConfiguraci
 
 app.get("/logCasa", controlador.datosLog);
 
+/*
 app.get("/cogerDatosLog", controlador.cogerDatosLog);
 
 app.post("/cogerDatosLog", controlador.cogerDatosLog);
-
+*/
 
 app.get("/cerrarSesion", controlador.cerrarSession);
 

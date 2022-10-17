@@ -1,194 +1,165 @@
-<?php
-session_start();
-include("../inc.php");
-comprobarSesionVacia();
-//Zona horaria
-date_default_timezone_set("Europe/Madrid");
-
-$infoUsuario = $listado->recuperarDatosUsuario($_SESSION['nickname']);
-$nombCasa = $listado->buscarNombreCasa($_SESSION['idCasa']);
-$datosSensoresUsuario = $listado->listarSensoresValoresPorCasa($_SESSION['idCasa']);
-
-    //Coger registros de temperatura del día, mes y año
-    $registrosTemperaturaDia = $listado->obtenerRegistrosTempHum($_SESSION['idCasa'], "temperatura", date('Y-m-d 00:00'), date('Y-m-d 23:59'));
-    $registrosTemperaturaMes = $listado->obtenerRegistrosTempHum($_SESSION['idCasa'], "temperatura", date('Y-m-01 00:00'), date('Y-m-t 23:59'));
-    $registrosTemperaturaAño = $listado->obtenerRegistrosTempHum($_SESSION['idCasa'], "temperatura", date('Y-01-01 00:00'), date('Y-12-t 23:59'));
-
-    //Coger registros de humedad del día, mes y año
-    $registrosHumedadDia = $listado->obtenerRegistrosTempHum($_SESSION['idCasa'], "humedad", date('Y-m-d 00:00'), date('Y-m-d 23:59'));
-    $registrosHumedadMes = $listado->obtenerRegistrosTempHum($_SESSION['idCasa'], "humedad", date('Y-m-01 00:00'), date('Y-m-t 23:59'));
-    $registrosHumedadAño = $listado->obtenerRegistrosTempHum($_SESSION['idCasa'], "humedad", date('Y-01-01 00:00'), date('Y-12-t 23:59'));
-
-    //Coger el registro Máximo y Mínimo de temperatura del día 
-    $registrosTemperaturaDiaMin = $listado->tempHumMinFecha($_SESSION['idCasa'], "temperatura", date('Y-m-d 00:00'), date('Y-m-d 23:59'));
-    $registrosTemperaturaDiaMax = $listado->tempHumMaxFecha($_SESSION['idCasa'], "temperatura", date('Y-m-d 00:00'), date('Y-m-d 23:59'));
-
-    //Coger el registro Máximo y Mínimo de temperatura del Mes 
-    $registrosTemperaturaMesMin = $listado->tempHumMinFecha($_SESSION['idCasa'], "temperatura", date('Y-m-01 00:00'), date('Y-m-t 23:59'));
-    $registrosTemperaturaMesMax = $listado->tempHumMaxFecha($_SESSION['idCasa'], "temperatura", date('Y-m-01 00:00'), date('Y-m-t 23:59'));
-
-    //Coger el registro Máximo y Mínimo de temperatura del Año 
-    $registrosTemperaturaAñoMin = $listado->tempHumMinFecha($_SESSION['idCasa'], "temperatura", date('Y-01-01 00:00'), date('Y-12-t 23:59'));
-    $registrosTemperaturaAñoMax = $listado->tempHumMaxFecha($_SESSION['idCasa'], "temperatura", date('Y-01-01 00:00'), date('Y-12-t 23:59'));
-
-    //Coger el registro Máximo y Mínimo de humedad del día 
-    $registrosHumedadDiaMin = $listado->tempHumMinFecha($_SESSION['idCasa'], "humedad", date('Y-m-d 00:00'), date('Y-m-d 23:59'));
-    $registrosHumedadDiaMax = $listado->tempHumMaxFecha($_SESSION['idCasa'], "humedad", date('Y-m-d 00:00'), date('Y-m-d 23:59'));
-
-    //Coger el registro Máximo y Mínimo de humedad del Mes 
-    $registrosHumedadMesMin = $listado->tempHumMinFecha($_SESSION['idCasa'], "humedad", date('Y-m-01 00:00'), date('Y-m-t 23:59'));
-    $registrosHumedadMesMax = $listado->tempHumMaxFecha($_SESSION['idCasa'], "humedad", date('Y-m-01 00:00'), date('Y-m-t 23:59'));
-
-    //Coger el registro Máximo y Mínimo de humedad del Año 
-    $registrosHumedadAñoMin = $listado->tempHumMinFecha($_SESSION['idCasa'], "humedad", date('Y-01-01 00:00'), date('Y-12-t 23:59'));
-    $registrosHumedadAñoMax = $listado->tempHumMaxFecha($_SESSION['idCasa'], "humedad", date('Y-01-01 00:00'), date('Y-12-t 23:59'));
-
-/*
-    echo "<br>----------------<br>";
-    echo "$registrosTemperaturaMesMin<br>";
-    echo "$registrosTemperaturaMesMax<br>";
-    echo "<br>----------------<br>";
-    echo date('Y-01-01 00:00') . "<br>";
-    echo date('Y-12-t 23:59');
-    echo "<br>----------------<br>";
-
-/*
-    var_dump($registrosTemperaturaMes);
-    echo "<br>----------------------------<br>";
-    echo count($registrosTemperaturaMes) . "<br>";
-    echo $registrosTemperaturaMes[0]['fechaRegistro'] . "<br>";
-    echo $registrosTemperaturaMes[0]['valor'] . "<br>";
-    echo "<br>----------------------------<br>";
-*/
-//-------------------------------
-//TEMPERATURA
-    $valoresTempGraficaDia = "";
-    for ($i = 0; $i < count($registrosTemperaturaDia); $i++) {
-        if (count($registrosTemperaturaDia) - 1 == $i) {
-            $valoresTempGraficaDia .= $registrosTemperaturaDia[$i]['valor'];
-        } else {
-            $valoresTempGraficaDia .= $registrosTemperaturaDia[$i]['valor'] . ",";
-        }
-    }
-//echo $valoresTempGraficaDia . "<br>";
-
-    $fechasTempGraficaDia = "";
-    for ($i = 0; $i < count($registrosTemperaturaDia); $i++) {
-        if (count($registrosTemperaturaDia) - 1 == $i) {
-            $fechasTempGraficaDia .=  "'".date("H:i",  strtotime($registrosTemperaturaDia[$i]['fechaRegistro'])). "'";
-        } else {
-            $fechasTempGraficaDia .= "'".date("H:i",  strtotime($registrosTemperaturaDia[$i]['fechaRegistro'])). "'" . ",";
-        }
-    }
-//echo $fechasTempGraficaDia . "<br>";
-
-    $valoresTempGraficaMes = "";
-    for ($i = 0; $i < count($registrosTemperaturaMes); $i++) {
-        if (count($registrosTemperaturaMes) - 1 == $i) {
-            $valoresTempGraficaMes .= $registrosTemperaturaMes[$i]['valor'];
-        } else {
-            $valoresTempGraficaMes .= $registrosTemperaturaMes[$i]['valor'] . ",";
-        }
-    }
-//echo $valoresTempGraficaMes . "<br>";
-
-    $fechasTempGraficaMes = "";
-    for ($i = 0; $i < count($registrosTemperaturaMes); $i++) {
-        if (count($registrosTemperaturaMes) - 1 == $i) {
-            $fechasTempGraficaMes .=  "'".date("Y-m-d",  strtotime($registrosTemperaturaMes[$i]['fechaRegistro'])). "'";
-        } else {
-            $fechasTempGraficaMes .= "'".date("Y-m-d",  strtotime($registrosTemperaturaMes[$i]['fechaRegistro'])). "'" . ",";
-        }
-    }
-//echo $fechasTempGraficaMes . "<br>";
-
-    $valoresTempGraficaAño = "";
-    for ($i = 0; $i < count($registrosTemperaturaAño); $i++) {
-        if (count($registrosTemperaturaAño) - 1 == $i) {
-            $valoresTempGraficaAño .= $registrosTemperaturaAño[$i]['valor'];
-        } else {
-            $valoresTempGraficaAño .= $registrosTemperaturaAño[$i]['valor'] . ",";
-        }
-    }
-//echo $valoresTempGraficaAño . "<br>";
-
-    $fechasTempGraficaAño = "";
-    for ($i = 0; $i < count($registrosTemperaturaAño); $i++) {
-        if (count($registrosTemperaturaAño) - 1 == $i) {
-            $fechasTempGraficaAño .=  "'".date("Y-m-d",  strtotime($registrosTemperaturaAño[$i]['fechaRegistro'])). "'";
-        } else {
-            $fechasTempGraficaAño .= "'".date("Y-m-d",  strtotime($registrosTemperaturaAño[$i]['fechaRegistro'])). "'" . ",";
-        }
-    }
-//echo $fechasTempGraficaAño . "<br>";
-
-//-------------------------------
-//HUMEDAD
-$valoresHumGraficaDia = "";
-for ($i = 0; $i < count($registrosHumedadDia); $i++) {
-    if (count($registrosHumedadDia) - 1 == $i) {
-        $valoresHumGraficaDia .= $registrosHumedadDia[$i]['valor'];
-    } else {
-        $valoresHumGraficaDia .= $registrosHumedadDia[$i]['valor'] . ",";
-    }
-}
-//echo $valoresHumGraficaDia . "<br>";
-
-$fechasHumGraficaDia = "";
-for ($i = 0; $i < count($registrosHumedadDia); $i++) {
-    if (count($registrosHumedadDia) - 1 == $i) {
-        $fechasHumGraficaDia .=  "'".date("H:i",  strtotime($registrosHumedadDia[$i]['fechaRegistro'])). "'";
-    } else {
-        $fechasHumGraficaDia .= "'".date("H:i",  strtotime($registrosHumedadDia[$i]['fechaRegistro'])). "'" . ",";
-    }
-}
-//echo $fechasTempGraficaDia . "<br>";
-
-$valoresHumGraficaMes = "";
-for ($i = 0; $i < count($registrosHumedadMes); $i++) {
-    if (count($registrosHumedadMes) - 1 == $i) {
-        $valoresHumGraficaMes .= $registrosHumedadMes[$i]['valor'];
-    } else {
-        $valoresHumGraficaMes .= $registrosHumedadMes[$i]['valor'] . ",";
-    }
-}
-//echo $valoresTempGraficaMes . "<br>";
-
-$fechasHumGraficaMes = "";
-for ($i = 0; $i < count($registrosHumedadMes); $i++) {
-    if (count($registrosHumedadMes) - 1 == $i) {
-        $fechasHumGraficaMes .=  "'".date("Y-m-d",  strtotime($registrosHumedadMes[$i]['fechaRegistro'])). "'";
-    } else {
-        $fechasHumGraficaMes .= "'".date("Y-m-d",  strtotime($registrosHumedadMes[$i]['fechaRegistro'])). "'" . ",";
-    }
-}
-//echo $fechasTempGraficaMes . "<br>";
-
-$valoresHumGraficaAño = "";
-for ($i = 0; $i < count($registrosHumedadAño); $i++) {
-    if (count($registrosHumedadAño) - 1 == $i) {
-        $valoresHumGraficaAño .= $registrosHumedadAño[$i]['valor'];
-    } else {
-        $valoresHumGraficaAño .= $registrosHumedadAño[$i]['valor'] . ",";
-    }
-}
-//echo $valoresTempGraficaAño . "<br>";
-
-$fechasHumGraficaAño = "";
-for ($i = 0; $i < count($registrosHumedadAño); $i++) {
-    if (count($registrosHumedadAño) - 1 == $i) {
-        $fechasHumGraficaAño .=  "'".date("Y-m-d",  strtotime($registrosHumedadAño[$i]['fechaRegistro'])). "'";
-    } else {
-        $fechasHumGraficaAño .= "'".date("Y-m-d",  strtotime($registrosHumedadAño[$i]['fechaRegistro'])). "'" . ",";
-    }
-}
-//echo $fechasTempGraficaAño . "<br>";
-
-
-?>
-
 <script>
-        let datosSensores = <%-sensoresValoresPorCasa%>
+    let datosSensores = <%-sensoresValoresPorCasa%>;
+    let idCasa = <%-idCasa%>;
+
+    let tempMax = <%-tempMax%>;
+    let tempMin = <%-tempMax%>;
+
+    let humMax = <%-humMax%>;
+    let humMin = <%-humMin%>;
+
+    let temps = <%-temps%>;
+    let hums = <%-hums%>;
+
+    let tempMaxDia = JSON.parse(JSON.stringify(tempMax[0]));
+    let tempMaxMes = JSON.parse(JSON.stringify(tempMax[1]));
+    let tempMaxAno = JSON.parse(JSON.stringify(tempMax[2]));
+
+    let tempMinDia = JSON.parse(JSON.stringify(tempMin[0]));
+    let tempMinMes = JSON.parse(JSON.stringify(tempMin[1]));
+    let tempMinAno = JSON.parse(JSON.stringify(tempMin[2]));
+
+
+    let humMaxDia = JSON.parse(JSON.stringify(humMax[0]));
+    let humMaxMes = JSON.parse(JSON.stringify(humMax[1]));
+    let humMaxAno = JSON.parse(JSON.stringify(humMax[2]));
+
+    let humMinDia = JSON.parse(JSON.stringify(humMin[0]));
+    let humMinMes = JSON.parse(JSON.stringify(humMin[1]));
+    let humMinAno = JSON.parse(JSON.stringify(humMin[2]));
+
+    let tempsDia = JSON.parse(JSON.stringify(temps[0]));
+    let tempsMes = JSON.parse(JSON.stringify(temps[1]));
+    let tempsAno = JSON.parse(JSON.stringify(temps[2]));
+
+    let humsDia = JSON.parse(JSON.stringify(hums[0]));
+    let humsMes = JSON.parse(JSON.stringify(hums[1]));
+    let humsAno = JSON.parse(JSON.stringify(hums[2]));
+
+    console.log(JSON.stringify(tempMin));
+
+    console.log(tempsMes);
+
+   
+    //Coger los valores necesarios para la Temperatura y Humedad máxima y mínima
+
+    (tempMaxDia == "" ? tempMaxDia = "-" : tempMaxDia = JSON.parse(JSON.stringify(tempMaxDia[0].valor)) );
+    (tempMaxMes == "" ? tempMaxMes = "-" : tempMaxMes = JSON.parse(JSON.stringify(tempMaxMes[0].valor)));
+    (tempMaxAno == "" ? tempMaxAno = "-" : tempMaxAno = JSON.parse(JSON.stringify(tempMaxAno[0].valor)));
+
+
+    (tempMinDia == "" ? tempMinDia = "-" : tempMinDia = JSON.parse(JSON.stringify(tempMinDia[0].valor)));
+    (tempMinMes == "" ? tempMinMes = "-" : tempMinMes = JSON.parse(JSON.stringify(tempMinMes[0].valor)));
+    (tempMinAno == "" ? tempMinAno = "-" : tempMinAno = JSON.parse(JSON.stringify(tempMinAno[0].valor)));
+
+
+    (humMaxDia == "" ? humMaxDia = "-" : humMaxDia = JSON.parse(JSON.stringify(humMaxDia[0].valor)));
+    (humMaxMes == "" ? humMaxMes = "-" : humMaxMes = JSON.parse(JSON.stringify(humMaxMes[0].valor)));
+    (humMaxAno == "" ? humMaxAno = "-" : humMaxAno = JSON.parse(JSON.stringify(humMaxAno[0].valor)));
+
+    (humMinDia == "" ? humMinDia = "-" : humMinDia = JSON.parse(JSON.stringify(humMinDia[0].valor)));
+    (humMinMes == "" ? humMinMes = "-" : humMinMes = JSON.parse(JSON.stringify(humMinMes[0].valor)));
+    (humMinAno == "" ? humMinAno = "-" : humMinAno = JSON.parse(JSON.stringify(humMinAno[0].valor)));
+
+    //----Guardar las fechas de todos los resultados de TEMPERATURA----//
+    //Fechas Dia
+    let fechasTempD = [];
+    for(let key in tempsDia) {
+        valoresFechas = JSON.parse(JSON.stringify(tempsDia[key].fechaRegistro));
+        date = new Date(valoresFechas);
+        valoresFechas = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" +  date.getSeconds() ;
+        fechasTempD.push(valoresFechas);
+    }
+
+    //Fechas Mensuales
+    let fechasTempM = [];
+    for(let key in tempsMes) {
+        valoresFechas = JSON.parse(JSON.stringify(tempsMes[key].fechaRegistro));
+        date = new Date(valoresFechas);
+        valoresFechas = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate()  + " " + date.getHours() + ":" + date.getMinutes() + ":"  +  date.getSeconds();
+        fechasTempM.push(valoresFechas);
+    }
+
+    //Fechas Anuales
+    let fechasTempA = [];
+    for(let key in tempsAno) {
+        valoresFechas = JSON.parse(JSON.stringify(tempsAno[key].fechaRegistro));
+        date = new Date(valoresFechas);
+        valoresFechas = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate()  + " " + date.getHours() + ":" + date.getMinutes() + ":" +  date.getSeconds();
+        fechasTempA.push(valoresFechas);
+    }
+
+    //----Guardar los valores de todos los resultados de TEMPERATURA----//
+    //Valores Dia
+    let valoresTempD = [];
+    for(let key in tempsDia) {
+        valoresFechas = JSON.parse(JSON.stringify(tempsDia[key].valor));
+        valoresTempD.push(valoresFechas);
+    }
+
+    //Valores Mensuales
+    let valoresTempM = [];
+    for(let key in tempsMes) {
+        valoresFechas = JSON.parse(JSON.stringify(tempsMes[key].valor));
+        valoresTempM.push(valoresFechas);
+    }
+
+    //Valores Anuales
+    let valoresTempA = [];
+    for(let key in tempsAno) {
+        valoresFechas = JSON.parse(JSON.stringify(tempsAno[key].valor));
+        valoresTempA.push(valoresFechas);
+    }
+
+    //----Guardar las fechas de todos los resultados de HUMEDAD----//
+    //Fechas Dia
+    let fechasHumD = [];
+    for(let key in humsDia) {
+        valoresFechas = JSON.parse(JSON.stringify(humsDia[key].fechaRegistro));
+        date = new Date(valoresFechas);
+        valoresFechas = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate()  + " " + date.getHours() + ":" + date.getMinutes() + ":"  + date.getSeconds();
+        fechasHumD.push(valoresFechas);
+    }
+
+    //Fechas Mensuales
+    let fechasHumM = [];
+    for(let key in humsMes) {
+        valoresFechas = JSON.parse(JSON.stringify(humsMes[key].fechaRegistro));
+        date = new Date(valoresFechas);
+        valoresFechas = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate()  + " " + date.getHours() + ":" + date.getMinutes() + ":" +  date.getSeconds();
+        fechasHumM.push(valoresFechas);
+    }
+
+    //Fechas Anuales
+    let fechasHumA = [];
+    for(let key in humsAno) {
+        valoresFechas = JSON.parse(JSON.stringify(humsAno[key].fechaRegistro));
+        date = new Date(valoresFechas);
+        valoresFechas = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate()  + " " + date.getHours() + ":" + date.getMinutes() + ":" +  date.getSeconds();
+        fechasHumA.push(valoresFechas);
+    }
+
+    //----Guardar los valores de todos los resultados de HUMEDAD----//
+    //Valores Dia
+    let valoresHumD = [];
+    for(let key in humsDia) {
+        valoresFechas = JSON.parse(JSON.stringify(humsDia[key].valor));
+        valoresHumD.push(valoresFechas);
+    }
+
+    //Valores Mensuales
+    let valoresHumM = [];
+    for(let key in humsMes) {
+        valoresFechas = JSON.parse(JSON.stringify(humsMes[key].valor));
+        valoresHumM.push(valoresFechas);
+    }
+
+    //Valores Anuales
+    let valoresHumA = [];
+    for(let key in humsAno) {
+        valoresFechas = JSON.parse(JSON.stringify(humsAno[key].valor));
+        valoresHumA.push(valoresFechas);
+    }
 
 </script>
 
@@ -228,11 +199,11 @@ for ($i = 0; $i < count($registrosHumedadAño); $i++) {
                         </div>
                         <div class="iconosTemp">
                             <div class="maxTemp">
-                                <img src="../imagenes/iconos/maxTemp.png" alt="Máxima Temperatura" title="Máxima temperatura">
+                                <img src="/public/imagenes/iconos/maxTemp.png" alt="Máxima Temperatura" title="Máxima temperatura">
                                 <p id="valorMaxTemp">-</p>
                             </div>
                             <div class="minTemp">
-                                <img src="../imagenes/iconos/minTemp.png" alt="Mínima Temperatura" title="Mínima temperatura">
+                                <img src="/public/imagenes/iconos/minTemp.png" alt="Mínima Temperatura" title="Mínima temperatura">
                                 <p id="valorMinTemp">-</p>
                             </div>
                         </div>
@@ -255,11 +226,11 @@ for ($i = 0; $i < count($registrosHumedadAño); $i++) {
                         </div>
                         <div class="iconosHum">
                             <div class="maxHum">
-                                <img src="../imagenes/iconos/maxHum.png" alt="Máxima Humedad" title="Máxima humedad">
+                                <img src="/public/imagenes/iconos/maxHum.png" alt="Máxima Humedad" title="Máxima humedad">
                                 <p id="valorMaxHum">-</p>
                             </div>
                             <div class="minHum">
-                                <img src="../imagenes/iconos/minHum.png" alt="Mínima Humedad" title="Mínima humedad">
+                                <img src="/public/imagenes/iconos/minHum.png" alt="Mínima Humedad" title="Mínima humedad">
                                 <p id="valorMinHum">-</p>
                             </div>
                         </div>
@@ -286,12 +257,12 @@ for ($i = 0; $i < count($registrosHumedadAño); $i++) {
 
     <script>
         $(document).ready(function(){
-            $("#valorMaxTemp").html("<?= (empty($registrosTemperaturaDiaMax) &&  $registrosTemperaturaDiaMax != 0) ? "-" : $registrosTemperaturaDiaMax ?>");
-            $("#valorMinTemp").html("<?= (empty($registrosTemperaturaDiaMin) &&  $registrosTemperaturaDiaMin != 0) ? "-"  : $registrosTemperaturaDiaMin ?>");
+            console.log((fechasHumD));
+            console.log((valoresHumD));
 
             var data = [{
-                x: [<?=$fechasTempGraficaDia?>],
-                y: [<?=$valoresTempGraficaDia?>],
+                x: fechasTempD,
+                y: valoresTempD,
                 type: 'scatter'
             }];
 
@@ -303,12 +274,15 @@ for ($i = 0; $i < count($registrosHumedadAño); $i++) {
 
             Plotly.newPlot('contGraficaTemp', data, layout, config);
 
-            $("#valorMaxHum").html("<?= (empty($registrosHumedadDiaMax) &&  $registrosHumedadDiaMax != 0) ?  "-" : $registrosHumedadDiaMax ?>");
-            $("#valorMinHum").html("<?= (empty($registrosHumedadDiaMin) &&  $registrosHumedadDiaMin != 0) ? "-"  : $registrosHumedadDiaMin ?>");
+            $("#valorMaxTemp").html(tempMaxDia);
+            $("#valorMinTemp").html(tempMinDia);
+
+            $("#valorMaxHum").html(humMaxDia);
+            $("#valorMinHum").html(humMinDia);
 
             var dataHum = [{
-                x: [<?=$fechasHumGraficaDia?>],
-                y: [<?=$valoresHumGraficaDia?>],
+                x: fechasHumD,
+                y: valoresHumD,
                 type: 'scatter'
             }];
 
@@ -322,6 +296,7 @@ for ($i = 0; $i < count($registrosHumedadAño); $i++) {
            
 
             /* Poner fondo sobre la opción seleccionada en el menu vertical */
+
             $(".iconoMP:nth-child(2)").css("background-color", "#293B97");
 
             //Estado arduino
@@ -341,12 +316,13 @@ for ($i = 0; $i < count($registrosHumedadAño); $i++) {
         $(document).on("change", "#fechaTemp", function() {
             if ($("#fechaTemp option:selected").text() == "Día") {
                 //console.log("Has elegido dia");
-                $("#valorMaxTemp").html("<?= (empty($registrosTemperaturaDiaMax) &&  $registrosTemperaturaDiaMax != 0) ?  "-" : $registrosTemperaturaDiaMax ?>");
-                $("#valorMinTemp").html("<?= (empty($registrosTemperaturaDiaMin) && $registrosTemperaturaDiaMin != 0) ? "-"  : $registrosTemperaturaDiaMin ?>");
+                $("#valorMaxTemp").html(tempMaxDia);
+                $("#valorMinTemp").html(tempMinDia);
+
 
                 var dataTemp = [{
-                    x: [<?=$fechasTempGraficaDia?>],
-                    y: [<?=$valoresTempGraficaDia?>],
+                    x: fechasTempD,
+                    y: valoresTempD,
                     type: 'scatter'
                 }];
 
@@ -360,15 +336,15 @@ for ($i = 0; $i < count($registrosHumedadAño); $i++) {
                 
             } else if ($("#fechaTemp option:selected").text() == "Mes") {
                 //console.log("Has elegido mes");
-                $("#valorMaxTemp").html("<?= (empty($registrosTemperaturaMesMax)) ?  "-" : $registrosTemperaturaMesMax ?>");
-                $("#valorMinTemp").html("<?= (empty($registrosTemperaturaMesMin)) ? "-"  : $registrosTemperaturaMesMin ?>");
+                $("#valorMaxTemp").html(tempMaxMes);
+                $("#valorMinTemp").html(tempMinMes);
 
                 var dataTemp = [{
-                    x: [<?=$fechasTempGraficaMes?>],
-                    y: [<?=$valoresTempGraficaMes?>],
+                    x: fechasTempM,
+                    y: valoresTempM,
                     type: 'scatter'
                 }];
-
+/*
                 var layout = {
                     autorange: true,
                     xaxis: {
@@ -376,20 +352,21 @@ for ($i = 0; $i < count($registrosHumedadAño); $i++) {
                         type: 'date'
                     }
                 };
-
+*/
 
                 Plotly.newPlot('contGraficaTemp', dataTemp, layout);
 
             } else if ($("#fechaTemp option:selected").text() == "Año") {
                 //console.log("Has elegido año");
-                $("#valorMaxTemp").html("<?= (empty($registrosTemperaturaAñoMax) && $registrosTemperaturaAñoMax != 0) ?  "-" : $registrosTemperaturaAñoMax ?>");
-                $("#valorMinTemp").html("<?= (empty($registrosTemperaturaAñoMin) && $registrosTemperaturaAñoMin != 0) ? "-"  : $registrosTemperaturaAñoMin ?>");
+                $("#valorMaxTemp").html(tempMaxAno);
+                $("#valorMinTemp").html(tempMinAno);
 
                 var dataTemp = [{
-                    x: [<?=$fechasTempGraficaAño?>],
-                    y: [<?=$valoresTempGraficaAño?>],
+                    x: fechasTempA,
+                    y: valoresTempA,
                     type: 'scatter'
                 }];
+
                 /*
                 var layout = {
                     autorange: true,
@@ -399,6 +376,7 @@ for ($i = 0; $i < count($registrosHumedadAño); $i++) {
                     }
                 };
                 */
+
                 Plotly.newPlot('contGraficaTemp', dataTemp);
             }
         });
@@ -406,12 +384,13 @@ for ($i = 0; $i < count($registrosHumedadAño); $i++) {
         $(document).on("change", "#fechaHum", function() {
             if ($("#fechaHum option:selected").text() == "Día") {
                 //console.log("Has elegido dia");
-                $("#valorMaxHum").html("<?= (empty($registrosHumedadDiaMax) && $registrosHumedadDiaMax != 0) ?  "-" : $registrosHumedadDiaMax ?>");
-                $("#valorMinHum").html("<?= (empty($registrosHumedadDiaMin) && $registrosHumedadDiaMin != 0) ? "-"  : $registrosHumedadDiaMin ?>");
+                $("#valorMaxHum").html(humMaxDia);
+                $("#valorMinHum").html(humMinDia);
+
 
                 var dataHum = [{
-                    x: [<?=$fechasHumGraficaDia?>],
-                    y: [<?=$valoresHumGraficaDia?>],
+                    x: fechaHumD,
+                    y: valoresHumD,
                     type: 'scatter'
                 }];
 
@@ -424,33 +403,33 @@ for ($i = 0; $i < count($registrosHumedadAño); $i++) {
                 
             } else if ($("#fechaHum option:selected").text() == "Mes") {
                 //console.log("Has elegido mes");
-                $("#valorMaxHum").html("<?= (empty($registrosHumedadMesMax) && $registrosHumedadMesMax != 0 ) ? "-" : $registrosHumedadMesMax ?>");
-                $("#valorMinHum").html("<?= (empty($registrosHumedadMesMin) && $registrosHumedadMesMin != 0) ? "-"  : $registrosHumedadMesMin ?>");
+                $("#valorMaxHum").html(humMaxMes);
+                $("#valorMinHum").html(humMinMes);
 
                 var dataHum = [{
-                    x: [<?=$fechasHumGraficaMes?>],
-                    y: [<?=$valoresHumGraficaMes?>],
+                    x: fechasHumM,
+                    y: valoresHumM,
                     type: 'scatter'
                 }];
-
+/*
                 var layout = {
                     xaxis: {
                         range: ['<?=date('Y-m-01')?>', '<?=date('Y-m-t')?>'],
                         type: 'date'
                     }
                 };
-
+*/
 
                 Plotly.newPlot('contGraficaHum', dataHum, layout);
 
             } else if ($("#fechaHum option:selected").text() == "Año") {
                 //console.log("Has elegido año");
-                $("#valorMaxHum").html("<?= (empty($registrosHumedadAñoMax) && $registrosHumedadAñoMax != 0) ?  "-" : $registrosHumedadAñoMax ?>");
-                $("#valorMinHum").html("<?= (empty($registrosHumedadAñoMin) && $registrosHumedadAñoMin != 0) ? "-"  : $registrosHumedadAñoMin ?>");
+                $("#valorMaxHum").html(HumMaxAno);
+                $("#valorMinHum").html(humMinAno);
 
                 var dataHum = [{
-                    x: [<?=$fechasHumGraficaAño?>],
-                    y: [<?=$valoresHumGraficaAño?>],
+                    x: fechasHumAño,
+                    y: valoresHumAño,
                     type: 'scatter'
                 }];
 
@@ -466,6 +445,7 @@ for ($i = 0; $i < count($registrosHumedadAño); $i++) {
 
 
                 //Plotly.newPlot('contGraficaHum', dataHum, layout);
+
                 Plotly.newPlot('contGraficaHum', dataHum);
             }
         });
@@ -483,7 +463,7 @@ for ($i = 0; $i < count($registrosHumedadAño); $i++) {
                     method: "POST",
                     url: " /admin/actualizarValoresPanel",
                     data: {
-                        idCasa: <?= $_SESSION['idCasa'] ?>,
+                        idCasa: idCasa,
                     },
                 })
                 .done(function(data) {
@@ -519,7 +499,7 @@ for ($i = 0; $i < count($registrosHumedadAño); $i++) {
             recuperarValores();
         }, 5000);
 
-        
+    
     </script>
 </body>
 

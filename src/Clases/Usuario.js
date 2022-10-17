@@ -1125,7 +1125,6 @@ class Usuario{
         }
 
         datos = datos.substring(1, datos.length - 1);
-        console.log(datos);
 
 
         this.modificarTemaBD(datos)
@@ -1168,31 +1167,31 @@ class Usuario{
         *  @access public
         *  @return array|null
         */  
-       /*
-          function obtenerRegistrosTempHum(int $idCasa, String $nombSensor,String $fechaInicio, String $fechaFin){
-            $registros = Array();
-            if(!empty($idCasa)){
-                $query="SELECT * 
-                    FROM `tienen` 
-                    INNER JOIN sensor on sensor.idSensor = tienen.idSensor
-                    INNER JOIN registro on registro.idRegistro = tienen.idRegistro
-                    WHERE nombSensor = '".$nombSensor."' AND sensor.idCasa = $idCasa AND (fechaRegistro BETWEEN '".$fechaInicio."' AND '".$fechaFin."')
-                    ORDER BY `registro`.`fechaRegistro` ASC";
-                
+       
+        obtenerRegistrosTempHum(nombSensor, fechaInicio, fechaFin){
+            return new Promise((resolve, reject) => {
+
+                console.log(nombSensor +" -->" + fechaInicio +" -->" + fechaFin);
+                var r = conexion.query("SELECT registro.idRegistro, fechaRegistro, valor FROM `tienen`INNER JOIN sensor on sensor.idSensor = tienen.idSensor INNER JOIN registro on registro.idRegistro = tienen.idRegistro WHERE nombSensor = ? AND sensor.idCasa = ? AND (fechaRegistro BETWEEN ? AND ?) ORDER BY `registro`.`fechaRegistro` ASC ", [nombSensor, this.idCasa, fechaInicio,fechaFin],(error, result) => {
+                    if(error){
                         
-                if($res = parent::conecta()->query($query)) {   
-                    while($fila = mysqli_fetch_array($res)){
-                        $registros[] = array('idRegistro'=>$fila['idRegistro'], "fechaRegistro" => $fila['fechaRegistro'], "valor"=>$fila['valor']);
+                    // error = [error, "\n<p>ERROR: No se han obtenido los valores de la TemperaturaHumedad para las gráficas</p>"]
+                        //return (error);    
+                        //callback(error);
+                        reject(error);
                     }
-                    return $registros;
-                }else{
-                    echo "No se han obtenido los registros del sensor TemperaturaHumedad para las gráficas";
-                }
-            }
+                    //callback(result);
+                    //let resultado = [result, "\n<p>Se obtenido los valores del sensor TemperaturaHumedad para las gráficas</p>"];
+                    //return result;
+                    //resolve(r.sql);
+                    resolve(result);
+                });
+            
+            });
         }
 
 
-        */
+        
 
          /**
         *   Obtener la temperatura o la humedad mínima entre 2 fechas
@@ -1204,18 +1203,16 @@ class Usuario{
  
             if(this.idCasa){
                 return new Promise((resolve, reject) => {
-                    conexion.query("SELECT * " +
-                                    "FROM `tienen`" +
-                                    "INNER JOIN sensor on sensor.idSensor = tienen.idSensor" +
-                                    "INNER JOIN registro on registro.idRegistro = tienen.idRegistro" +
-                                    "WHERE nombSensor = ? AND sensor.idCasa = $idCasa AND (fechaRegistro BETWEEN ? AND ?')"+
-                                    "ORDER BY CAST(`valor` AS UNSIGNED) ASC LIMIT 1", [nombSensor, fechaInicio,fechaFin],(error, result) => {
+                    const sql = 
+                                "SELECT * FROM `tienen` INNER JOIN sensor on sensor.idSensor = tienen.idSensor INNER JOIN registro on registro.idRegistro = tienen.idRegistro WHERE nombSensor = ? AND sensor.idCasa = ? AND (fechaRegistro BETWEEN ? AND ?) ORDER BY CAST(`valor` AS UNSIGNED) ASC LIMIT 1";
+                    
+                    conexion.query(sql, [nombSensor, this.idCasa, fechaInicio,fechaFin],(error, result) => {
                         if(error){
                             error = [error, "\n<p>ERROR: No se han obtenido el valor mínimo del sensor TemperaturaHumedad para las gráficas</p>"]
                             return reject(error);                    
                         }
                         let resultado = [result, "\n<p>Se obtenido el valor mínimo del sensor TemperaturaHumedad para las gráficas</p>"];
-                        resolve(resultado);
+                        resolve(result);
                     });
                      
                 });  
@@ -1233,18 +1230,13 @@ class Usuario{
  
             if(this.idCasa){
                 return new Promise((resolve, reject) => {
-                    conexion.query("SELECT *" + 
-                                "FROM `tienen` " +
-                                "INNER JOIN sensor on sensor.idSensor = tienen.idSensor" +
-                                "INNER JOIN registro on registro.idRegistro = tienen.idRegistro" +
-                                "WHERE nombSensor = ? AND sensor.idCasa = ? AND (fechaRegistro BETWEEN ? AND ?)"+
-                                "ORDER BY CAST(`valor` AS UNSIGNED) DESC LIMIT 1", [nombSensor, idCasa, fechaInicio,fechaFin],(error, result) => {
+                    let r = conexion.query("SELECT * FROM `tienen` INNER JOIN sensor on sensor.idSensor = tienen.idSensor INNER JOIN registro on registro.idRegistro = tienen.idRegistro WHERE nombSensor = ? AND sensor.idCasa = ? AND (fechaRegistro BETWEEN ? AND ?) ORDER BY CAST(`valor` AS UNSIGNED) DESC LIMIT 1", [nombSensor, this.idCasa, fechaInicio,fechaFin],(error, result) => {
                         if(error){
                             error = [error, "\n<p>ERROR:No se han obtenido el valor máximo del sensor TemperaturaHumedad para las gráficas</p>"];
                             return reject(error);                    
                         }
-                        let resultado = [resultado, "\n<p>Se han obtenido el valor máximo del sensor TemperaturaHumedad para las gráficas</p>"];
-                        resolve(resultado);
+                        let resultado = [result, "\n<p>Se han obtenido el valor máximo del sensor TemperaturaHumedad para las gráficas</p>"];
+                        resolve(result);
                     });
                 });  
   
