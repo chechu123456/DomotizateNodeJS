@@ -6,6 +6,8 @@ const path = require("path");
 const request = require('request');
 const { resolve } = require("path");
 const xml2js = require('xml2js').parseString;;
+var moment = require('moment'); // require
+
 
 const controller = {};
 /*
@@ -289,13 +291,199 @@ controller.pasarDatosPrincipales = (req, res)=>{
                         sensoresValoresPorCasa: JSON.stringify(resulSensoresValoresPorCasa),
                         datosTema: resultDatosTema,
                         localidad: localidad,
-                        nombCasa: resultNombCasa[0][0].nombCasa
+                        nombCasa: resultNombCasa[0][0].nombCasa,                    
                     }
                     
                     if(web == "cambiarTema"){
                         res.render("panel/cambiarTema", enviarDatos);
                     }else if(web == "graficas"){
-                        res.render("panel/graficas", enviarDatos);
+                        console.log("------------------------------------------------------------------------");   
+                        let hoy = new Date();        
+                        console.log(hoy);
+         
+                        let diaI = moment().format("YYYY-MM-DD") + " 00:00"; 
+                        let diaF = moment().format("YYYY-MM-DD") + " 23:59"; 
+
+                        console.log(diaI);
+                        console.log(diaF);
+
+                        let mesI = moment().startOf('month').format("YYYY-MM-DD") + " 00:00"; 
+                        let mesF = moment().endOf('month').format("YYYY-MM-DD") + " 23:59"; 
+
+                        console.log(mesI);
+                        console.log(mesF);
+
+                        let anoI = moment().startOf('year').format("YYYY-MM-DD") + " 00:00"; 
+                        let anoF = moment().endOf('year').format("YYYY-MM-DD") + " 23:59"; 
+
+                        console.log(anoI);
+                        console.log(anoF);
+
+                        //2 Formas de hacer los CALLBACKS
+                        /*
+                        let tempDia;
+                        function mostrarResultado(resultado){
+                            console.log(resultado);
+                            tempDia = resultado;
+                        
+                        }
+
+                        async function registrosTempHum(callback){
+                            const resultado = await user.obtenerRegistrosTempHum("temperatura", diaI, diaF, callback);
+                            callback(resultado);
+                        }
+                        registrosTempHum(mostrarResultado)
+                        .then(function(){
+                            console.log("------------------------------------------------------------------------");   
+                            console.log(tempDia);
+                            console.log("------------------------------------------------------------------------");   
+                        });
+
+*/                  
+                        let tempMaxDia, tempMaxMes, tempMaxAno;
+                        let tempMinDia, tempMinMes, tempMinAno;
+
+                        let HumMaxDia, HumMaxMes, HumMaxAno;
+                        let HumMinDia, HumMinMes, HumMinAno;
+
+                        let tempsDia, tempsMes, tempsAno;
+                        let humsDia, humsMes, humsAno;
+                   
+
+                        user.obtenerRegistrosTempHum("temperatura", diaI, diaF)
+                        .then(resultTemp => {
+
+                            tempsDia = resultTemp;
+                            return  user.obtenerRegistrosTempHum("humedad", diaI, diaF);
+
+                        })
+                        .then(resultHum =>{
+                            humsDia = resultHum;
+
+                            return  user.obtenerRegistrosTempHum("temperatura", mesI, mesF)
+                        })
+                        .then(resultTemp =>{
+                            tempsMes = resultTemp;
+
+                            return  user.obtenerRegistrosTempHum("humedad", mesI, mesF)
+                        })
+                        .then( resultHum =>{
+                            humsMes = resultHum;
+
+                            return  user.obtenerRegistrosTempHum("temperatura", anoI, anoF)
+                        })
+                        .then( resultTemp =>{
+                            tempsAno = resultTemp;
+
+                            return  user.obtenerRegistrosTempHum("humedad", anoI, anoF)
+                        })
+                        .then( resultHum => {
+                            humsAno = resultHum;
+
+                            //OBTENER Temperaturas y humedades Máximas
+                            return user.tempHumMaxFecha("temperatura", diaI, diaF)
+                        })
+                        .then(resultTemp => {
+
+                            tempMaxDia = resultTemp;
+                            return  user.tempHumMaxFecha("humedad", diaI, diaF);
+
+                        })
+                        .then(resultHum =>{
+                            humMaxDia = resultHum;
+
+                            return  user.tempHumMaxFecha("temperatura", mesI, mesF)
+                        })
+                        .then(resultTemp =>{
+                            tempMaxMes = resultTemp;
+
+                            return  user.tempHumMaxFecha("humedad", mesI, mesF)
+                        })
+                        .then( resultHum =>{
+                            humMaxMes = resultHum;
+
+                            return  user.tempHumMaxFecha("temperatura", anoI, anoF)
+                        })
+                        .then( resultTemp =>{
+                            tempMaxAno = resultTemp;
+
+                            return  user.tempHumMaxFecha("humedad", anoI, anoF)
+                        })
+                        .then( resultHum =>{
+                            humMaxAno = resultHum;
+
+                            //OBTENER Temperaturas y humedades Minimas
+                            return  user.tempHumMinFecha("temperatura", diaI, diaI)
+                        })
+
+                        .then(resultTemp => {
+
+                            tempMinDia = resultTemp;
+                            return  user.tempHumMinFecha("humedad", diaI, diaF);
+
+                        })
+                        .then(resultHum =>{
+                            humMinDia = resultHum;
+
+                            return  user.tempHumMinFecha("temperatura", mesI, mesF)
+                        })
+                        .then(resultTemp =>{
+                            tempMinMes = resultTemp;
+
+                            return  user.tempHumMinFecha("humedad", mesI, mesF)
+                        })
+                        .then( resultHum =>{
+                            humMinMes = resultHum;
+
+                            return  user.tempHumMinFecha("temperatura", anoI, anoF)
+                        })
+                        .then( resultTemp =>{
+                            tempMinAno = resultTemp;
+
+                            return  user.tempHumMinFecha("humedad", anoI, anoF)
+                        })
+                        .then (restultHum => {
+                            humMinAno =  restultHum;
+
+
+                            let tempMax = [tempMaxDia, tempMaxMes, tempMaxAno];
+                            let tempMin = [tempMinDia, tempMinMes, tempMinAno];
+
+                            let humMax = [humMaxDia, humMaxMes, humMaxAno];
+                            let humMin = [humMinDia, humMinMes, humMinAno];
+
+                            let temps = [tempsDia, tempsMes, tempsAno];
+                            let hums = [humsDia, humsMes, humsAno];
+
+
+
+                            enviarDatos = {
+                                datosUsuario: resultDatosUsuario,
+                                sensoresValoresPorCasa: JSON.stringify(resulSensoresValoresPorCasa),
+                                datosTema: resultDatosTema,
+                                localidad: localidad,
+                                nombCasa: resultNombCasa[0][0].nombCasa, 
+                                tempMax: JSON.stringify(tempMax),
+                                tempMin: JSON.stringify(tempMin),
+                                humMax: JSON.stringify(humMax),
+                                humMin: JSON.stringify(humMin),
+                                temps: JSON.stringify(temps),
+                                hums: JSON.stringify(hums),
+                                idCasa: req.session.idCasa
+                            }
+
+                            res.render("panel/graficas", enviarDatos);
+
+                        })
+                        .catch(err =>{
+                            console.log(err);
+                        })
+
+
+                        //user.obtenerRegistrosTempHum("temperatura", diaI, diaF, (result) => console.log(result));
+                       // {tempDia: user.obtenerRegistrosTempHum("temperatura", diaI, diaF, (result) => console.log(result))};
+                        //console.log(tempDia);
+                        
                     }else if(web == "configuracion"){
                         res.render("panel/configuracion", enviarDatos);
                     }
@@ -434,12 +622,22 @@ controller.datosLog = (req, res)=>{
         user.buscarNombreCasa()
         .then(resultNombCasa => {
 
-            var enviarDatos = {
-                datosUsuario: resultDatosUsuario,
-                nombCasa: resultNombCasa[0][0].nombCasa
-            }
+            user.listarRegistrosCasa()
+            .then(resultRegistrosCasa => {
+                console.log(resultRegistrosCasa);
+                var enviarDatos = {
+                    datosUsuario: resultDatosUsuario,
+                    nombCasa: resultNombCasa[0][0].nombCasa,
+                    registrosCasa: resultRegistrosCasa
+                }
+                res.render("panel/logCasa", enviarDatos);
 
-            res.render("panel/logCasa", enviarDatos);
+                //res.send(resultRegistrosCasa);
+            })
+            .catch(err =>{
+                console.log(err);
+            });
+
         })
         .catch(err =>{
             console.log(err);
@@ -450,7 +648,7 @@ controller.datosLog = (req, res)=>{
     });
 
 };
-
+/*
 controller.cogerDatosLog = async (req, res)=>{
     user.setNickname(req.session.usuarioNickname);
     user.setIdCasa(req.session.idCasa);
@@ -468,8 +666,46 @@ controller.cogerDatosLog = async (req, res)=>{
     
 };
 
+*/
 
+controller.datosGraficasTempHum = (req, res)=>{
+    user.setNickname(req.session.usuarioNickname);
+    user.setIdCasa(req.session.idCasa);
 
+    this.obtenerRegistrosTempHum(nombSensor, fechaInicio, fechaFin)
+    .then(resultRegistrosTempHum => {
+        res.send(resultRegistrosTempHum)
+    })
+    .catch(err =>{
+        console.log(err);
+    });
+};
+
+controller.datosGraficasTempHumMin = (req, res)=>{
+    user.setNickname(req.session.usuarioNickname);
+    user.setIdCasa(req.session.idCasa);
+
+    this.tempHumMinFecha(nombSensor, fechaInicio, fechaFin)
+    .then(resultRegistrosTempHum => {
+        res.send(resultRegistrosTempHum)
+    })
+    .catch(err =>{
+        console.log(err);
+    });
+};
+
+controller.datosGraficasTempHumMax = (req, res)=>{
+    user.setNickname(req.session.usuarioNickname);
+    user.setIdCasa(req.session.idCasa);
+
+    this.tempHumMaxFecha(nombSensor, fechaInicio, fechaFin)
+    .then(resultRegistrosTempHum => {
+        res.send(resultRegistrosTempHum)
+    })
+    .catch(err =>{
+        console.log(err);
+    });
+};
 
 controller.cerrarSession = (req, res)=>{
     if(req.session){
